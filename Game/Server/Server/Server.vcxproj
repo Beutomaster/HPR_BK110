@@ -150,11 +150,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="S_Messung.h" />
+    <ClInclude Include="S_Spiel.h" />
+    <ClInclude Include="S_Verbindung.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="S_Messung.cpp" />
+    <ClCompile Include="S_Spiel.cpp" />
+    <ClCompile Include="S_Verbindung.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
