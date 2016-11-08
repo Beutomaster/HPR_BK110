@@ -2,10 +2,21 @@
 //
 
 #include "stdafx.h"
+#include "S_Verbindung.h"
+#include "S_Spiel.h"
+#include "S_Messung.h"
 
 
-int main()
-{
+int main(){
+	int Spielerzahl;
+	Spielerzahl = Verbindung_INIT();	//TCP-Port öffnen, Aufforderung zum Verbinden, Spielerhandle speichern, Spielstart wenn alle geklingelt haben
+	Spiel_INIT(Spielerzahl); //Karten verteilen, Spielfeld verschicken
+	cout << "Abbruch mit ESC";
+	while (42) { // ende wenn Spiel beendet / "esc" auf Server
+		// S_Verbindung - empfangen() bei Paketeingang
+	}
+
+
     return 0;
 }
 
