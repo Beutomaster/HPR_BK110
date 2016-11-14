@@ -13,7 +13,7 @@ int main(){
 	Spiel_INIT(Spielerzahl); //Karten verteilen, Spielfeld verschicken
 	cout << "Abbruch mit ESC";
 	while (42) { // ende wenn Spiel beendet / "esc" auf Server
-		// S_Verbindung - empfangen() bei Paketeingang
+		// S_Verbindung - empfangen() (fragt Paketeingang ab)
 	}
 
 

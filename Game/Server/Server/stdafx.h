@@ -13,3 +13,9 @@
 
 
 // TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.
+#include <stdlib.h>
+#include <iostream>
+
+// cout und endl-Manipulator aus std Namensraum
+using std::cout;
+using std::endl;

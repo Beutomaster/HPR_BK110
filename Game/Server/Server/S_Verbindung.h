@@ -1,8 +1,7 @@
 #pragma once
 
-#ifndef S_Verbindung_h
+#include <winsock.h>
 
-int Verbindung_INIT();
-void broadcast(char, char *, char *, char);
-
-#endif // !S_Verbindung_h
+unsigned char Verbindung_INIT();
+void broadcast(unsigned char, unsigned char *, unsigned char *, unsigned char);
+void empfangen();
