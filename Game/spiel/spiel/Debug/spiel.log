@@ -1,0 +1,3 @@
+﻿  S_Spiel.cpp
+d:\tim\documents\github\hpr_bk110\game\spiel\spiel\s_spiel.cpp(62): warning C4244: "Initialisierung": Konvertierung von "double" in "int", möglicher Datenverlust
+  spiel.vcxproj -> D:\Tim\Documents\GitHub\HPR_BK110\Game\spiel\Debug\spiel.exe
