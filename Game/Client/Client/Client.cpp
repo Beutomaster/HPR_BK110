@@ -48,6 +48,23 @@ int main()
 		//bei Broadcasts Event -> C_Verbindung empfangen()
 		
 		//bei Tastendruck Event C_Spiel Tastendruck()
+		while ((bRet = GetMessage(&msg, NULL, 0, 0)) != 0)
+		{
+			/*
+			if (bRet == -1)
+			{
+				// handle the error and possibly exit
+			}
+			else
+			{
+				if (FilterMessage(&msg) == 0) // <-- Function you write
+				{
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
+			}
+			*/
+		}
 	}
     return 0;
 }
