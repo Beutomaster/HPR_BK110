@@ -15,6 +15,7 @@ char    szBuffer[256];						// used for messages
 char FAR* remoteIP;
 
 unsigned char wtcp_serv();
+void read_and_echo(SOCKET);
 void new_player(SOCKET);
 
 unsigned char wtcp_serv() //returns Spieleranzahl
@@ -22,6 +23,7 @@ unsigned char wtcp_serv() //returns Spieleranzahl
 	unsigned char Spieleranzahl = 0;
 	SOCKET MySock, x;
 	struct sockaddr_in addr;
+	int adresslaenge;
 	MSG	   msg;
 	char s[20];
 
@@ -35,13 +37,16 @@ unsigned char wtcp_serv() //returns Spieleranzahl
 		return 0;
 	}
 
+	cout << endl;
+
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(IN_PORT);
 	addr.sin_addr.s_addr = 0;
 
-	getsockname(MySock, &addr, sizeof(addr));
+	adresslaenge = sizeof(addr);
+	getsockname(MySock, (struct sockaddr *) &addr, &adresslaenge);
 	_itoa(addr.sin_addr.s_addr, s, 10);
-	cout << s;
+	cout << "Adresse : " << s << " " << endl;
 	// bind socket to server port and IP-address
 	cout << "bind()";
 	if (bind(MySock, (const struct sockaddr FAR *)&addr, sizeof(addr)) < 0)
@@ -53,9 +58,10 @@ unsigned char wtcp_serv() //returns Spieleranzahl
 
 	cout << endl;
 
-	getsockname(MySock, &addr, sizeof(addr));
+	adresslaenge = sizeof(addr);
+	getsockname(MySock, (struct sockaddr *) &addr, &adresslaenge);
 	_itoa(addr.sin_addr.s_addr, s, 10);
-	cout << s;
+	cout << "Adresse : " << s << " " << endl;
 
 	// listening for incoming connections 
 	cout << "listen()";
@@ -114,15 +120,48 @@ unsigned char wtcp_serv() //returns Spieleranzahl
 			if (FD_ISSET(x, (fd_set FAR *)&readfds))
 			{
 				cout << "select()";
-				if (x != MySock)				// data readable on present 
-					; //read_and_echo(hWnd, x);
-				else
+				if (x != MySock) {	// data readable on present 
+					read_and_echo(x); // nicht fertig
+				}
+				else {
 					new_player(x);	// new connection request
-					Spieleranzahl++;
+					Spieleranzahl++; // nicht fertig
+				}
 			}
 		}
 	}
 	return Spieleranzahl;
+}
+
+void read_and_echo(SOCKET iClient)	// Read and echo data
+{
+	int iLen;
+
+	cout << "recv()" << endl;
+	if ((iLen = recv(iClient, (LPSTR)buffer, sizeof(buffer), 0)) <= 0)
+	{
+		cout << "failed" << endl;
+		in_use[iClient] = 0;
+		(void)closesocket(iClient);
+		sprintf(szBuffer, "closesocket(%d)", iClient);
+		cout << szBuffer << endl;
+	}
+	else
+	{
+		sprintf(szBuffer, " %d                 %d", iClient, iLen);
+		cout << szBuffer << endl;
+
+		buffer[iLen] = 0;						// mark String end
+		cout << buffer << endl;
+
+		cout << "send()" << endl;
+		if (send(iClient, (LPSTR)buffer, iLen, 0) < 0)
+		{
+			in_use[iClient] = 0;
+			(void)closesocket(iClient);
+			cout << "closesocket()" << endl;
+		}
+	}
 }
 
 void new_player(SOCKET MySock)	// accept new connection

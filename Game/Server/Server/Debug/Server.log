@@ -1,16 +1,16 @@
-﻿  stdafx.cpp
-  Server.cpp
-  S_Verbindung.cpp
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(42): error C2664: "int getsockname(SOCKET,sockaddr *,int *)" : Konvertierung von Argument 2 von "sockaddr_in *" in "sockaddr *" nicht möglich
-  c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(42): note: Die Typen, auf die verwiesen wird, sind nicht verknüpft; die Konvertierung erfordert einen reinterpret_cast-Operator oder eine Typumwandlung im C- oder Funktionsformat.
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(56): error C2664: "int getsockname(SOCKET,sockaddr *,int *)" : Konvertierung von Argument 2 von "sockaddr_in *" in "sockaddr *" nicht möglich
-  c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(56): note: Die Typen, auf die verwiesen wird, sind nicht verknüpft; die Konvertierung erfordert einen reinterpret_cast-Operator oder eine Typumwandlung im C- oder Funktionsformat.
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(43): error C4996: '_itoa': This function or variable may be unsafe. Consider using _itoa_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+﻿  S_Verbindung.cpp
+c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(48): warning C4996: '_itoa': This function or variable may be unsafe. Consider using _itoa_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdlib.h(637): note: Siehe Deklaration von "_itoa"
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(57): error C4996: '_itoa': This function or variable may be unsafe. Consider using _itoa_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(63): warning C4996: '_itoa': This function or variable may be unsafe. Consider using _itoa_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdlib.h(637): note: Siehe Deklaration von "_itoa"
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(143): error C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(27): warning C4101: "msg": Unreferenzierte lokale Variable
+c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(146): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: Siehe Deklaration von "sprintf"
-  S_Spiel.cpp
-  S_Messung.cpp
-  Code wird generiert...
+c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(151): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: Siehe Deklaration von "sprintf"
+c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(181): warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+  c:\program files (x86)\windows kits\8.1\include\um\winsock2.h(1868): note: Siehe Deklaration von "inet_ntoa"
+c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\server\server\s_verbindung.cpp(182): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: Siehe Deklaration von "sprintf"
+  Server.vcxproj -> C:\Daten\FH-Kiel\HPR_BK110\HPR_BK110\Game\Server\Debug\Server.exe
+  Server.vcxproj -> C:\Daten\FH-Kiel\HPR_BK110\HPR_BK110\Game\Server\Debug\Server.pdb (Full PDB)

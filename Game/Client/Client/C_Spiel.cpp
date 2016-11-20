@@ -2,9 +2,9 @@
 #include "C_Verbindung.h"
 #include "C_Spiel.h"
 
-void aktualisieren(unsigned char Spieleranzahl, unsigned char *Kartenanzahl, unsigned char *aktuelle_Karte, unsigned char Gewinner) {
+void aktualisieren(unsigned char Spieleranzahl, unsigned char *Kartenanzahl, unsigned char *aktuelle_Karte, unsigned char Nachricht) {
 	// verarbeitet empfangenes Spielfeld
-	if (Gewinner) {
+	if (Nachricht) {
 
 	}
 } 

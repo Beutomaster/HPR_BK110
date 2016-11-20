@@ -2,15 +2,6 @@
 #include "C_Verbindung.h"
 #include "C_Spiel.h"
 
-#define WIN32_LEAN_AND_MEAN
-
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
@@ -22,7 +13,7 @@
 
 //Polling Client
 //An event based Client with hidden window would be better (create a hidden window by calling the CreateWindowEx method with the dwExStyle parameter set to 0)
-int client(int Server_IP)
+int client(PCSTR Server_IP)
 {
 	WSADATA wsaData;
 	SOCKET ConnectSocket = INVALID_SOCKET;
@@ -33,6 +24,11 @@ int client(int Server_IP)
 	char recvbuf[DEFAULT_BUFLEN];
 	int iResult;
 	int recvbuflen = DEFAULT_BUFLEN;
+	unsigned char Spieleranzahl = 0;
+	unsigned char Kartenanzahl[4];
+	unsigned char aktuelle_Karte[4];
+	unsigned char Nachricht = 0;
+	
 
 	// Validate the parameters
 	/*
@@ -50,7 +46,7 @@ int client(int Server_IP)
 	}
 
 	ZeroMemory(&hints, sizeof(hints));
-	hints.ai_family = AF_UNSPEC;
+	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
 
@@ -116,8 +112,22 @@ int client(int Server_IP)
 	do {
 
 		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-		if (iResult > 0)
+		if (iResult > 0) {
 			printf("Bytes received: %d\n", iResult);
+			Spieleranzahl = recvbuf[0];
+			if (iResult != (Spieleranzahl * 2 + 2)) {
+				printf("Fehlerhafte Nachricht!\n");
+			}
+			else {
+				for (int i = 0; i < Spieleranzahl; i++) {
+					Kartenanzahl[i] = recvbuf[1+i];
+					aktuelle_Karte[i] = recvbuf[1+Spieleranzahl+i];
+				}
+				Nachricht = recvbuf[1+Spieleranzahl*2];
+				aktualisieren(Spieleranzahl, Kartenanzahl, aktuelle_Karte, Nachricht);
+				tastendruck();
+			}
+		}
 		else if (iResult == 0)
 			printf("Connection closed\n");
 		else
@@ -133,10 +143,13 @@ int client(int Server_IP)
 }
 
 void Verbindung_INIT() {
-	//Eingabe IP-Adresse
-	int Server_IP = 0;
+	std::string zeichenkette;
+
 	printf("Bitte Server-Adresse eingeben:\n");
-	cin >> Server_IP; //IP-Notation noch in int umwandeln!!!, Eingabe prüfen
+
+	//Eingabe IP-Adresse
+	std::getline(std::cin, zeichenkette); //IP-Notation oder Hostname, Eingabe prüfen?
+	PCSTR Server_IP = (PCSTR) &zeichenkette;
 
 	client(Server_IP);
 

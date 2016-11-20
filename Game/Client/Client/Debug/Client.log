@@ -1,13 +1,6 @@
 ﻿  Client.cpp
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\client.cpp(9): error C2146: Syntaxfehler: Fehlendes ";" vor Bezeichner "ConsoleHandler"
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\client.cpp(9): error C2065: "DWORD": nichtdeklarierter Bezeichner
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\client.cpp(9): error C2146: Syntaxfehler: Fehlendes ")" vor Bezeichner "CEvent"
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\client.cpp(10): error C2143: Syntaxfehler: Es fehlt ";" vor "{"
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\client.cpp(10): error C2447: "{": Funktionsheader fehlt - Parameterliste im alten Stil?
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\client.cpp(43): error C2065: "PHANDLER_ROUTINE": nichtdeklarierter Bezeichner
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\client.cpp(43): error C2146: Syntaxfehler: Fehlendes ")" vor Bezeichner "ConsoleHandler"
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\client.cpp(44): error C2143: Syntaxfehler: Es fehlt ";" vor "{"
+c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\client.cpp(11): warning C4101: "mesg": Unreferenzierte lokale Variable
   C_Verbindung.cpp
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\c_verbindung.cpp(58): error C2664: "INT getaddrinfo(PCSTR,PCSTR,const ADDRINFOA *,PADDRINFOA *)" : Konvertierung von Argument 1 von "int" in "PCSTR" nicht möglich
-  c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\c_verbindung.cpp(58): note: Die Konvertierung eines ganzzahligen Typs in einen Zeigertyp erfordert ein reinterpret_cast-Operator oder eine Typumwandlung im C- oder Funktionsformat
   Code wird generiert...
+  Client.vcxproj -> C:\Daten\FH-Kiel\HPR_BK110\HPR_BK110\Game\Client\Debug\Client.exe
+  Client.vcxproj -> C:\Daten\FH-Kiel\HPR_BK110\HPR_BK110\Game\Client\Debug\Client.pdb (Full PDB)
