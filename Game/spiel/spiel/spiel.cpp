@@ -2,6 +2,7 @@
 //
 
 #include "S_Verbindung.h"
+#include "C_Verbindung.h"
 #include "S_Spiel.h"
 
 
@@ -9,6 +10,7 @@
 int main()
 {
 	int Spielerzahl;
+	c_Verbindung_INIT();
 	Spielerzahl = Verbindung_INIT();	//TCP-Port öffnen, Aufforderung zum Verbinden, Spielerhandle speichern, Spielstart wenn alle geklingelt haben
 	Spielerzahl = 4;
 	Spiel_INIT(Spielerzahl); //Karten verteilen, Spielfeld verschicken

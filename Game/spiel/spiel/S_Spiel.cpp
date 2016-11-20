@@ -18,11 +18,18 @@ char erste_karte[4];
 char letzte_karte[4];
 char Spieleranzahl = 0;
 char aktiver_spieler = 0;
+char spielerstatus[4];
 // globale Variablen ende
 
 void Spiel_INIT(int sa) {	//Karten verteilen, Spielfeld verschicken
 	srand(unsigned(time(0)));			// Zufallszahl initialisieren
 	Spieleranzahl = sa;
+
+	// Spieler aktivieren
+	for (int i = 0; i < 4; i++) {
+		if (i < Spieleranzahl) spielerstatus[i] = 1;
+		else spielerstatus[i] = 0;
+	}
 
 	// Spielerkarten Array initialisieren
 	for (int i = 0; i < 4; i++) {
@@ -72,7 +79,7 @@ void Spiel_INIT(int sa) {	//Karten verteilen, Spielfeld verschicken
 		}
 	}
 
-	// Testausgabe der Spielerkarten
+	// Test: Ausgabe der Spielerkarten
 /*	cout << "Testausgabe der Spielerkarten:" << endl;
 	for (int i = 0; i < Spieleranzahl; i++) {
 		cout << "Spieler: " << i + 1 << ", Anzahl Karten: " << static_cast<int>(kartenanzahl[i]) << ", erste Karten: " << static_cast<int>(spielerkarten[i][erste_karte[i]]) << ", letzte Karten: " << static_cast<int>(spielerkarten[i][letzte_karte[i]]) << endl;
@@ -98,11 +105,13 @@ void aktualisieren(char Spieler, char Taste) { //Taste = 1 (Karte aufdecken), = 
 	// verarbeitet empfangen Tastendruck
 	// aktualisert Spielstatus
 	// S_Verbindung - broadcast() aufrufen
-	int sp = ((int)Spieler) - 1, ta = (int)Taste;
+	int sp = ((int)Spieler) - 1, ta = (int)Taste, nachricht = 0;
+
+	// nicht auf Spieler ohne Karten warten
 	while (kartenanzahl[aktiver_spieler] == 0) aktiver_spieler = (aktiver_spieler + 1) % Spieleranzahl;
 	switch (ta) {
-	case 1:		// aufdecken
-		if (sp != aktiver_spieler) break;
+	case 1:		// Tastendruck: aufdecken
+		if (sp != aktiver_spieler) break;	// Spieler, die nicht dran sind, ignorieren
 		else {
 			offene_karte[sp] = spielerkarten[sp][erste_karte[sp]];	// erste Karte aufdecken
 			erste_karte[sp] = (erste_karte[sp] + 1) % 56;			// erste Karte eins weiter "Ringarray"
@@ -111,19 +120,21 @@ void aktualisieren(char Spieler, char Taste) { //Taste = 1 (Karte aufdecken), = 
 			aktiver_spieler = (aktiver_spieler + 1) % Spieleranzahl;
 		}
 		break;
-	case 2:		// klingeln
-		int farbe[4], wert, klingelflag = 0;
+	case 2:		// Tastendruck: klingeln
+		if (spielerstatus[sp] == 0) break;		// inaktive Spieler ignorieren
+
+		int farbe[4], wert, klingelflag = 0;	// Kartenfarbe, Kartenwert, Flag für "klingeln ok"
 		for (int i = 0; i < Spieleranzahl; i++) {
 			farbe[i] = (int)(offene_karte[i] / 10);
 		}
-		for (int i = 0; i < 4; i++) {			// Kartenfarbe
+		for (int i = 0; i < 4; i++) {			// Auswertung der 4 Kartenfarben
 			wert = 0;
-			for (int j = 0; j < Spieleranzahl; j++) {		// offene Karte
+			for (int j = 0; j < Spieleranzahl; j++) {		// Auswertung der offenen Karten
 				if (i + 1 == farbe[j]) {
 					wert = wert + (offene_karte[j] % 10);
 				}
 			}
-			if (wert == 5) {	// klingeln ok
+			if (wert == 5) {	// klingeln ok -> Spieler erhält alle gespielten Karten
 				for (int k = 0; k < gk_zaehler; k++) {
 					spielerkarten[sp][letzte_karte[sp]+1] = gespielte_karten[k];
 					letzte_karte[sp] = (letzte_karte[sp] + 1) % 56;
@@ -131,16 +142,20 @@ void aktualisieren(char Spieler, char Taste) { //Taste = 1 (Karte aufdecken), = 
 				}
 				gk_zaehler = 0;
 				for (int k = 0; k < Spieleranzahl; k++) {
-					offene_karte[k] = NULL;
+					offene_karte[k] = NULL;		// offene Karten zurückgesetzt
+					if (kartenanzahl[k] == 0) {
+						spielerstatus[k] = 0;	//Spieler mit 0 Karten inaktiv
+					}
 				}
+				aktiver_spieler = sp;
 				klingelflag = 1;
 				break;
 			}
 		}
-		// klingeln falsch
+		// klingeln falsch -> alle anderen aktiven Spieler erhalten eine Karte vom Klingelden
 		if (klingelflag == 0) {
 			for (int i = 0; i < Spieleranzahl; i++) {
-				if (i != sp && kartenanzahl[sp] > 0) {
+				if (i != sp && kartenanzahl[sp] > 0 && spielerstatus[i] == 1) {
 					spielerkarten[i][letzte_karte[i] + 1] = spielerkarten[sp][erste_karte[sp]];
 					letzte_karte[i] = (letzte_karte[i] + 1) % 56;
 					kartenanzahl[i]++;
@@ -148,19 +163,34 @@ void aktualisieren(char Spieler, char Taste) { //Taste = 1 (Karte aufdecken), = 
 					kartenanzahl[sp]--;
 				}
 			}
+			if (kartenanzahl[sp] == 0) spielerstatus[sp] = 0;	//Spieler mit 0 Karten inaktiv
+
+		}
+
+		// Spielende?
+		int spzaehler = Spieleranzahl, gewinner = 0;
+		for (int k = 0; k < Spieleranzahl; k++) {
+			if (kartenanzahl[k] == 0) spzaehler--;
+			else gewinner = k + 1;
+		}
+		if (spzaehler == 1) {
+			cout << "Spieler " << gewinner << " hat gewonnen";
+			return;
 		}
 		klingelflag = 0;
 		break;
 	}
 
+
+	nachricht = nachricht + aktiver_spieler;
 	//Test
-	system("CLS");
+/*	system("CLS");
 	for (int i = 0; i < Spieleranzahl; i++) {
 		for (int j = erste_karte[i]; j <= letzte_karte[i]; j++) {
 			cout << (int)spielerkarten[i][j] << " | ";
 		}
 		cout << endl;
-	}
+	}*/
 
-	broadcast(Spieleranzahl, kartenanzahl, offene_karte, 0);
+	broadcast(Spieleranzahl, kartenanzahl, offene_karte, nachricht);
 } 

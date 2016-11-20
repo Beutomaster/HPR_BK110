@@ -1,38 +1,67 @@
 #include "C_Verbindung.h"
 #include "C_Spiel.h"
 #include <iostream>
+#include <string>
 #include <iomanip>
 #include <Windows.h>	// für Konsolenausgabe
 #include <conio.h>		// für getch()
 using namespace std;
 
-void c_aktualisieren(char Spieleranzahl, char *Kartenanzahl, char *offene_Karte, char Gewinner) {
-	// verarbeitet empfangenes Spielfeld
-	switch ((int)Spieleranzahl) {
-	case 4:
-		gotoxy(25, 15);
-		cout << "Spieler 4: " << setw(2) << (int)Kartenanzahl[3];
-		gotoxy(45, 15);
-		cout << setw(2) << (int)offene_Karte[3];
-	case 3:
-		gotoxy(45, 22);
-		cout << "Spieler 3: " << setw(2) << (int)Kartenanzahl[2];
-		gotoxy(50, 17);
-		cout << setw(2) << (int)offene_Karte[2];
-	case 2:
-		gotoxy(70, 15);
-		cout << "Spieler 2: " << setw(2) << (int)Kartenanzahl[1];
-		gotoxy(55, 15);
-		cout << setw(2) << (int)offene_Karte[1];
-	default:
-		gotoxy(45, 8);
-		cout << "Spieler 1: " << setw(2) << (int)Kartenanzahl[0];
-		gotoxy(50, 13);
-		cout << setw(2) << (int)offene_Karte[0];
+void c_aktualisieren(char Spieleranzahl, char *kartenanzahl, char *offene_karte, char Nachricht) {
+	// empfangenes Spielfeld bearbeiten
+	string spieler[4];
+	int farbe, wert;
+	for (int i = 0; i < Spieleranzahl; i++) {
+		spieler[i] = "";
+		farbe = (int)(offene_karte[i] / 10);
+		wert = (int)(offene_karte[i] % 10);
+		for (int j = 0; j < wert; j++) {
+			switch (farbe) {
+			case 1:
+				spieler[i] = spieler[i] + "A ";
+				break;
+			case 2:
+				spieler[i] = spieler[i] + "B ";
+				break;
+			case 3:
+				spieler[i] = spieler[i] + "C ";
+				break;
+			case 4:
+				spieler[i] = spieler[i] + "D ";
+				break;
+			}
+		}
 	}
 
-	gotoxy(0, 30);
+	// empfangenes Spielfeld ausgeben
+	gotoxy(0, 0);
+	cout << "Spieler " << (Nachricht % 10) + 1 << " ist an der Reihe.";
+	switch ((int)Spieleranzahl) {
+	case 4:
+		gotoxy(20, 10);
+		cout << "Spieler 4: " << setw(2) << (int)kartenanzahl[3];
+		gotoxy(40, 10);
+		cout << setw(10) << left << spieler[3];
+	case 3:
+		gotoxy(45, 17);
+		cout << "Spieler 3: " << setw(2) << (int)kartenanzahl[2];
+		gotoxy(45, 12);
+		cout << setw(10) << left << spieler[2];
+	case 2:
+		gotoxy(70, 10);
+		cout << "Spieler 2: " << setw(2) << (int)kartenanzahl[1];
+		gotoxy(55, 10);
+		cout << setw(10) << left << spieler[1];
+	default:
+		gotoxy(45, 3);
+		cout << "Spieler 1: " << setw(2) << (int)kartenanzahl[0];
+		gotoxy(45, 8);
+		cout << setw(10) << left << spieler[0];
+	}
+
+	gotoxy(0, 20);
 } 
+
 
 void c_tastendruck() {
 	// Taste = 1 (Karte aufdecken), = 2 (Klingeln)
@@ -43,14 +72,14 @@ void c_tastendruck() {
 	while (42) {
 		KeyInfo = _getch();
 		switch (KeyInfo) {
-		case 't':
-		case 'z':
-		case 'h':
-		case 'j':
-		case 'v':
-		case 'b':
-		case 'f':
-		case 'g':
+		case 't':		// Spieler 1: aufdecken
+		case 'z':		// Spieler 1: klingeln
+		case 'h':		// Spieler 2: aufdecken
+		case 'j':		// Spieler 2: klingeln
+		case 'v':		// Spieler 3: aufdecken
+		case 'b':		// Spieler 3: klingeln
+		case 'f':		// Spieler 4: aufdecken
+		case 'g':		// Spieler 4: klingeln
 			c_senden(KeyInfo);
 			return;
 		case 'q':
@@ -58,7 +87,6 @@ void c_tastendruck() {
 		}
 	}
 }
-
 
 // Hilfsfunktion zur Konsolenausgabe
 void gotoxy(int x, int y)

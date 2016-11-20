@@ -8,11 +8,11 @@ int Verbindung_INIT() {
 	return 0; //Spieleranzahl
 }
 
-void broadcast(char Spieleranzahl, char *Kartenanzahl, char *offene_Karte, char Gewinner) {
+void broadcast(char Spieleranzahl, char *Kartenanzahl, char *offene_Karte, char Nachricht) {
 	// Spielfeld an alle verschicken
 	// Spielernummmer senden?
 	// Gewinner = 0, solange kein Gewinner - Nach Sieg auf Spielernummer setzen
-	c_empfangen(Spieleranzahl, Kartenanzahl, offene_Karte, Gewinner);
+	c_empfangen(Spieleranzahl, Kartenanzahl, offene_Karte, Nachricht);
 }
 
 void empfangen(char Taste) {

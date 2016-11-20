@@ -12,10 +12,10 @@ void c_senden(char Taste) {
 	empfangen(Taste);
 }
 
-void c_empfangen(char Spieleranzahl, char *Kartenanzahl, char *offene_Karte, char Gewinner) {
+void c_empfangen(char Spieleranzahl, char *Kartenanzahl, char *offene_Karte, char Nachricht) {
 	// nimmt Spielfeld entgegen
 	// ruft C_Spiel - aktualisieren() auf
 	// C_Spiel - Tastendruck() informieren: sperre aufheben
-	c_aktualisieren(Spieleranzahl, Kartenanzahl, offene_Karte, Gewinner);
+	c_aktualisieren(Spieleranzahl, Kartenanzahl, offene_Karte, Nachricht);
 	c_tastendruck();
 }
