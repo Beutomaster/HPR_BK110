@@ -32,10 +32,8 @@ void c_aktualisieren(char Spieleranzahl, char *kartenanzahl, char *offene_karte,
 			}
 		}
 	}
-
+	system("CLS");
 	// empfangenes Spielfeld ausgeben
-	gotoxy(0, 0);
-	cout << "Spieler " << (Nachricht % 10) + 1 << " ist an der Reihe.";
 	switch ((int)Spieleranzahl) {
 	case 4:
 		gotoxy(20, 10);
@@ -60,6 +58,18 @@ void c_aktualisieren(char Spieleranzahl, char *kartenanzahl, char *offene_karte,
 	}
 
 	gotoxy(0, 20);
+	if (Nachricht & 0x40) {
+		cout << "Spieler " << ((Nachricht & 0x0C) / 4) + 1 << " hat richtig geklingelt und erhaelt alle gespielten Karten." << endl;
+	}
+	if (Nachricht & 0x20) {
+		cout << "Spieler " << ((Nachricht & 0x0C) / 4) + 1 << " hat falsch geklingelt und gibt allen anderen Spielern eine Karte." << endl;
+	}
+	if (Nachricht & 0x10) {
+		cout << "Spieler " << (Nachricht & 0x03) << " hat gewonnen";
+	}
+	else {
+		cout << "Spieler " << (Nachricht & 0x03) + 1 << " ist an der Reihe." << endl;
+	}
 } 
 
 

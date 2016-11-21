@@ -112,18 +112,18 @@ void aktualisieren(char Spieler, char Taste) { //Taste = 1 (Karte aufdecken), = 
 	switch (ta) {
 	case 1:		// Tastendruck: aufdecken
 		if (sp != aktiver_spieler) break;	// Spieler, die nicht dran sind, ignorieren
-		else {
-			offene_karte[sp] = spielerkarten[sp][erste_karte[sp]];	// erste Karte aufdecken
-			erste_karte[sp] = (erste_karte[sp] + 1) % 56;			// erste Karte eins weiter "Ringarray"
-			gespielte_karten[gk_zaehler++] = offene_karte[sp];		// offene Karte auf gespielte Kartenhaufen
-			kartenanzahl[sp]--;
-			aktiver_spieler = (aktiver_spieler + 1) % Spieleranzahl;
-		}
+		
+		offene_karte[sp] = spielerkarten[sp][erste_karte[sp]];	// erste Karte aufdecken
+		erste_karte[sp] = (erste_karte[sp] + 1) % 56;			// erste Karte eins weiter "Ringarray"
+		gespielte_karten[gk_zaehler++] = offene_karte[sp];		// offene Karte auf gespielte Kartenhaufen
+		kartenanzahl[sp]--;
+		aktiver_spieler = (aktiver_spieler + 1) % Spieleranzahl;
 		break;
 	case 2:		// Tastendruck: klingeln
 		if (spielerstatus[sp] == 0) break;		// inaktive Spieler ignorieren
 
 		int farbe[4], wert, klingelflag = 0;	// Kartenfarbe, Kartenwert, Flag für "klingeln ok"
+		nachricht = nachricht + (sp*4);			// Nachrichtenbits 4 und 3 mit klingeldem Spieler gesetzt
 		for (int i = 0; i < Spieleranzahl; i++) {
 			farbe[i] = (int)(offene_karte[i] / 10);
 		}
@@ -148,6 +148,7 @@ void aktualisieren(char Spieler, char Taste) { //Taste = 1 (Karte aufdecken), = 
 					}
 				}
 				aktiver_spieler = sp;
+				nachricht = nachricht + 0x40;		// Nachrichtenbit 7 gesetzt (richtig geklingelt)
 				klingelflag = 1;
 				break;
 			}
@@ -163,6 +164,7 @@ void aktualisieren(char Spieler, char Taste) { //Taste = 1 (Karte aufdecken), = 
 					kartenanzahl[sp]--;
 				}
 			}
+			nachricht = nachricht + 0x20;			// Nachrichtenbit 6 gesetzt	(falsch geklingelt)
 			if (kartenanzahl[sp] == 0) spielerstatus[sp] = 0;	//Spieler mit 0 Karten inaktiv
 
 		}
@@ -174,15 +176,26 @@ void aktualisieren(char Spieler, char Taste) { //Taste = 1 (Karte aufdecken), = 
 			else gewinner = k + 1;
 		}
 		if (spzaehler == 1) {
-			cout << "Spieler " << gewinner << " hat gewonnen";
-			return;
+			nachricht = nachricht + 0x10;
+			nachricht = nachricht + gewinner;
+		//	cout << "Spieler " << gewinner << " hat gewonnen";
 		}
 		klingelflag = 0;
 		break;
 	}
 
+	// Aktiven Spieler setzen, wenn Spiel nicht zuende
+	if ((nachricht & 0x04) != 1)	nachricht = nachricht + aktiver_spieler;
 
-	nachricht = nachricht + aktiver_spieler;
+	// Aufbau Nachricht: 1byte
+	// 8765 4321:
+	// 8: ---
+	// 7: Flag richtig geklingelt
+	// 6: Flag falsch geklingelt
+	// 5: Flag Spielende
+	// 43: klingelnder Spieler
+	// 21: aktiver Spieler / Gewinner, wenn Flag Spielende
+
 	//Test
 /*	system("CLS");
 	for (int i = 0; i < Spieleranzahl; i++) {
