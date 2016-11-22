@@ -1,2 +1,13 @@
-﻿  C_Verbindung.cpp
-  Client.vcxproj -> D:\tima\OneDrive\FH\5Semester\HPR\Projekt\HPR_BK110-Hannes\HPR_BK110-Hannes\Game\Client\Debug\Client.exe
+﻿  Client.cpp
+d:\git_game\hpr_bk110\hpr_bk110\game\client\client\client.cpp(87): error C2664: "int GetWindowTextW(HWND,LPWSTR,int)" : Konvertierung von Argument 2 von "char [255]" in "LPWSTR" nicht möglich
+  d:\git_game\hpr_bk110\hpr_bk110\game\client\client\client.cpp(87): note: Die Typen, auf die verwiesen wird, sind nicht verknüpft; die Konvertierung erfordert einen reinterpret_cast-Operator oder eine Typumwandlung im C- oder Funktionsformat.
+d:\git_game\hpr_bk110\hpr_bk110\game\client\client\client.cpp(116): error C2664: "int GetWindowTextW(HWND,LPWSTR,int)" : Konvertierung von Argument 2 von "char [64]" in "LPWSTR" nicht möglich
+  d:\git_game\hpr_bk110\hpr_bk110\game\client\client\client.cpp(116): note: Die Typen, auf die verwiesen wird, sind nicht verknüpft; die Konvertierung erfordert einen reinterpret_cast-Operator oder eine Typumwandlung im C- oder Funktionsformat.
+d:\git_game\hpr_bk110\hpr_bk110\game\client\client\client.cpp(141): error C2664: "int wsprintfW(LPWSTR,LPCWSTR,...)" : Konvertierung von Argument 1 von "char [80]" in "LPWSTR" nicht möglich
+  d:\git_game\hpr_bk110\hpr_bk110\game\client\client\client.cpp(141): note: Die Typen, auf die verwiesen wird, sind nicht verknüpft; die Konvertierung erfordert einen reinterpret_cast-Operator oder eine Typumwandlung im C- oder Funktionsformat.
+d:\git_game\hpr_bk110\hpr_bk110\game\client\client\client.cpp(123): error C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+  c:\program files (x86)\windows kits\8.1\include\um\winsock2.h(1850): note: Siehe Deklaration von "inet_addr"
+d:\git_game\hpr_bk110\hpr_bk110\game\client\client\client.cpp(130): error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+  c:\program files (x86)\windows kits\8.1\include\um\winsock2.h(2238): note: Siehe Deklaration von "gethostbyname"
+d:\git_game\hpr_bk110\hpr_bk110\game\client\client\client.cpp(156): error C4996: 'WSAAsyncSelect': Use WSAEventSelect() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+  c:\program files (x86)\windows kits\8.1\include\um\winsock2.h(2699): note: Siehe Deklaration von "WSAAsyncSelect"
