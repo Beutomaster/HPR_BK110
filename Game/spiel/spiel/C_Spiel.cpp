@@ -7,6 +7,8 @@
 #include <conio.h>		// für getch()
 using namespace std;
 
+//int glob_tastensperre = 1;
+
 void c_aktualisieren(char Spieleranzahl, char *kartenanzahl, char *offene_karte, char Nachricht) {
 	// empfangenes Spielfeld bearbeiten
 	string spieler[4];
@@ -33,6 +35,7 @@ void c_aktualisieren(char Spieleranzahl, char *kartenanzahl, char *offene_karte,
 		}
 	}
 	system("CLS");
+	cout << hex << (int)Nachricht << dec;
 	// empfangenes Spielfeld ausgeben
 	switch ((int)Spieleranzahl) {
 	case 4:
@@ -58,18 +61,23 @@ void c_aktualisieren(char Spieleranzahl, char *kartenanzahl, char *offene_karte,
 	}
 
 	gotoxy(0, 20);
-	if (Nachricht & 0x40) {
-		cout << "Spieler " << ((Nachricht & 0x0C) / 4) + 1 << " hat richtig geklingelt und erhaelt alle gespielten Karten." << endl;
+	if (Nachricht & 0x80) {
+		cout << "Spieler " << (Nachricht & 0x03) + 1 << " hat richtig geklingelt und erhaelt alle gespielten Karten." << endl;
 	}
-	if (Nachricht & 0x20) {
+	if (Nachricht & 0x40) {
 		cout << "Spieler " << ((Nachricht & 0x0C) / 4) + 1 << " hat falsch geklingelt und gibt allen anderen Spielern eine Karte." << endl;
 	}
+	if (Nachricht & 0x20) {
+		cout << "Spieler " << ((Nachricht & 0x0C) / 4) + 1 << " hat keine Karten mehr und ist ausgeschieden" << endl;
+	}
 	if (Nachricht & 0x10) {
-		cout << "Spieler " << (Nachricht & 0x03) << " hat gewonnen";
+		cout << "Spieler " << (Nachricht & 0x03) + 1 << " hat gewonnen";
+		// ToDo allgemeine Tastensperre?
 	}
 	else {
 		cout << "Spieler " << (Nachricht & 0x03) + 1 << " ist an der Reihe." << endl;
 	}
+//	glob_tastensperre = 0;
 } 
 
 
@@ -79,6 +87,7 @@ void c_tastendruck() {
 	// löst C_Senden aus
 	// Nach Tastendruck sperrung bis nächster Broadcast
 	char KeyInfo = 0;
+//	while (glob_tastensperre) {}
 	while (42) {
 		KeyInfo = _getch();
 		switch (KeyInfo) {
@@ -90,6 +99,7 @@ void c_tastendruck() {
 		case 'b':		// Spieler 3: klingeln
 		case 'f':		// Spieler 4: aufdecken
 		case 'g':		// Spieler 4: klingeln
+//			glob_tastensperre = 1;
 			c_senden(KeyInfo);
 			return;
 		case 'q':
