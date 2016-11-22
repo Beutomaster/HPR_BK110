@@ -149,7 +149,7 @@ void Verbindung_INIT() {
 
 	//Eingabe IP-Adresse
 	std::getline(std::cin, zeichenkette); //IP-Notation oder Hostname, Eingabe prüfen?
-	PCSTR Server_IP = (PCSTR) &zeichenkette;
+	PCSTR Server_IP = zeichenkette.c_str();
 
 	client(Server_IP);
 

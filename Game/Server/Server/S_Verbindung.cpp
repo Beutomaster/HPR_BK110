@@ -26,6 +26,14 @@ unsigned char wtcp_serv() //returns Spieleranzahl
 	int adresslaenge;
 	MSG	   msg;
 	char s[20];
+	WSADATA wsaData;
+	int iResult;
+
+	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (iResult != 0) {
+		printf("WSAStartup failed with error: %d\n", iResult);
+		return 1;
+	}
 
 	for (x = 0; x < MAX_SOCKETS; x++)
 		in_use[x] = 0;

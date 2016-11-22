@@ -1,6 +1,2 @@
-﻿  Client.cpp
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\client.cpp(11): warning C4101: "mesg": Unreferenzierte lokale Variable
-  C_Verbindung.cpp
-  Code wird generiert...
-  Client.vcxproj -> C:\Daten\FH-Kiel\HPR_BK110\HPR_BK110\Game\Client\Debug\Client.exe
-  Client.vcxproj -> C:\Daten\FH-Kiel\HPR_BK110\HPR_BK110\Game\Client\Debug\Client.pdb (Full PDB)
+﻿  C_Verbindung.cpp
+  Client.vcxproj -> D:\tima\OneDrive\FH\5Semester\HPR\Projekt\HPR_BK110-Hannes\HPR_BK110-Hannes\Game\Client\Debug\Client.exe
