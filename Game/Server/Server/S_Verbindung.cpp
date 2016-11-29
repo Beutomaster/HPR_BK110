@@ -14,25 +14,32 @@ fd_set  readfds;
 char    szBuffer[256];						// used for messages
 char FAR* remoteIP;
 
-unsigned char wtcp_serv();
-void read_and_echo(SOCKET);
+char wtcp_serv();
+void read_and_echo(SOCKET, unsigned char);
 void new_player(SOCKET);
+char Spielstart = 0;
+struct Spielteilnehmer {
+	SOCKET Socket[MAX_PLAYER];
+	unsigned char Start[MAX_PLAYER];
+} Player;
 
-unsigned char wtcp_serv() //returns Spieleranzahl
+
+SOCKET MySock, x;
+
+char wtcp_serv() //returns Spieleranzahl
 {
-	unsigned char Spieleranzahl = 0;
-	SOCKET MySock, x;
 	struct sockaddr_in addr;
 	int adresslaenge;
 	MSG	   msg;
 	char s[20];
 	WSADATA wsaData;
 	int iResult;
+	unsigned char Spieler = 0;
 
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != 0) {
 		printf("WSAStartup failed with error: %d\n", iResult);
-		return 1;
+		return 0;
 	}
 
 	for (x = 0; x < MAX_SOCKETS; x++)
@@ -82,6 +89,9 @@ unsigned char wtcp_serv() //returns Spieleranzahl
 
 	cout << endl;
 
+	cout << "Server gestartet" << endl;
+	cout << "Warte auf Spieler" << endl;
+
 	//Schleife muss noch getrennt werden für Warten auf Spieler und Spiel
 	for (;; )
 	{
@@ -127,23 +137,28 @@ unsigned char wtcp_serv() //returns Spieleranzahl
 		{
 			if (FD_ISSET(x, (fd_set FAR *)&readfds))
 			{
-				cout << "select()";
-				if (x != MySock) {	// data readable on present 
-					read_and_echo(x); // nicht fertig
+				cout << "select()" << endl;
+				if (x != MySock) {	// data readable on present
+					for (Spieler = 0; Spieler < MAX_PLAYER; Spieler++) {
+						if(x==Player.Socket[Spieler-1]) break;
+					}
+					read_and_echo(x, Spieler); // nicht fertig
 				}
 				else {
-					new_player(x);	// new connection request
-					Spieleranzahl++; // nicht fertig
+					if (Spieleranzahl <= MAX_PLAYER && !Spielstart ) {
+						new_player(x);	// new connection request
+					}
 				}
 			}
 		}
 	}
-	return Spieleranzahl;
+	return 1;
 }
 
-void read_and_echo(SOCKET iClient)	// Read and echo data
+void read_and_echo(SOCKET iClient, unsigned char Spieler)	// Read and echo data
 {
 	int iLen;
+	unsigned char Taste = 0;
 
 	cout << "recv()" << endl;
 	if ((iLen = recv(iClient, (LPSTR)buffer, sizeof(buffer), 0)) <= 0)
@@ -161,6 +176,22 @@ void read_and_echo(SOCKET iClient)	// Read and echo data
 
 		buffer[iLen] = 0;						// mark String end
 		cout << buffer << endl;
+
+		if (iLen != 1) {
+			printf("Fehlerhafte Nachricht!\n");
+		}
+		else {
+			Taste = buffer[0];
+			if (Spielstart) aktualisieren(Spieler, Taste);
+			else {
+				if (Taste == 1) {
+					Player.Start[Spieler - 1] = 1;
+					for (int i = 0; i < Spieleranzahl; i++) {
+						Spielstart |= Spielstart;
+					}
+				}
+			}
+		}
 
 		cout << "send()" << endl;
 		if (send(iClient, (LPSTR)buffer, iLen, 0) < 0)
@@ -191,26 +222,62 @@ void new_player(SOCKET MySock)	// accept new connection
 		remoteIP, htons(peer.sin_port), iClient);
 	//ShowStatus(hWnd, szBuffer, ID_LISTING);
 	in_use[iClient] = 1;
+	Player.Socket[Spieleranzahl]= iClient;
+	Spieleranzahl++; // nicht fertig
 }
 
-unsigned char Verbindung_INIT() {
+void Verbindung_INIT() {
 	//TCP-Port öffnen, Aufforderung zum Verbinden, Spielerhandle speichern, Spielstart wenn alle geklingelt haben
-	unsigned char Spieleranzahl = 0;
-	if (wtcp_serv()) {
-		cout << "Server gestartet" << endl;
-		cout << "Warte auf Spieler" << endl;
+	Spieleranzahl = 0;
+	for (char i = 0; i < MAX_PLAYER; i++) {
+		Player.Start[i]=0;
 	}
-	
-	return Spieleranzahl; //Spieleranzahl
+	while (!wtcp_serv()) {
+	}
 }
 
-void broadcast(unsigned char Spieleranzahl, unsigned char *Kartenanzahl, unsigned char *aktuelle_Karte, unsigned char Gewinner) {
+void broadcast(unsigned char Spieleranzahl, unsigned char *Kartenanzahl, unsigned char *aktuelle_Karte, unsigned char Nachricht) {
 	// Spielfeld an alle verschicken
-	// Spielernummmer senden?
+	// Spielernummmer senden???
 	// Gewinner = 0, solange kein Gewinner - Nach Sieg auf Spielernummer setzen
+
+	SOCKET iClient;
+
+	//Nachricht im buffer erstellen
+	char iLen = 2 + Spieleranzahl * 2;
+	buffer[0] = Spieleranzahl;
+	for (int i = 0; i < Spieleranzahl; i++) {
+		buffer[1 + i] = Kartenanzahl[i];
+		buffer[1 + Spieleranzahl + i] = aktuelle_Karte[i];
+	}
+	buffer[1 + Spieleranzahl * 2] = Nachricht;
+
+	//send
+	cout << "send()" << endl;
+	for (iClient = 0; iClient < MAX_SOCKETS; iClient++) {
+		if (in_use[iClient]) {
+			if (send(iClient, (LPSTR)buffer, iLen, 0) < 0)
+			{
+				in_use[iClient] = 0;
+				(void)closesocket(iClient);
+				cout << "closesocket()" << endl;
+			}
+		}	
+	}	
 }
 
 void empfangen() {
 	// nimmt Tastendruck entgegen (mit Spielerhandle)
 	// ruft S_Spiel - aktualisieren(unsigned char Spieler, unsigned char Taste) bei Paketeingang auf
+}
+
+void cleanup() {
+	for (x = 0; x < MAX_SOCKETS; x++)	// close all aktiv Clients
+	{
+		if (in_use[x] && x != MySock)
+			(void)closesocket(x);
+	}
+	(void)closesocket(MySock);
+	WSACleanup();
+	return;
 }

@@ -7,6 +7,10 @@
 
 #include "targetver.h"
 
+#ifndef UNICODE
+#define UNICODE
+#endif 
+
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -15,7 +19,9 @@
 #include <stdio.h>
 #include <tchar.h>
 
-
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#endif
 
 // TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.
 #include <stdlib.h>
@@ -28,12 +34,7 @@
 
 #pragma comment(lib,"ws2_32.lib")
 
-// cout und endl-Manipulator aus std Namensraum
-using std::cout;
-using std::cin;
-using std::endl;
-
-extern HWND hWnd;
+using namespace std;
 
 #define WM_SOCKET (WM_USER + 1)					// private Windows-Nachrichten
 #define SERVER_PORT 6000			 				// COM-Server Port, über den der Server erreichbar ist

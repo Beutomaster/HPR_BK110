@@ -11,12 +11,15 @@
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "6000"
 
+HWND hWnd = NULL;
+char debug=1; //Debug-Message-Switch
+SOCKET ConnectSocket = INVALID_SOCKET;				// Über diesen Socket wird die Verbindung zum Server hergestellt
+
 //Polling Client
 //An event based Client with hidden window would be better (create a hidden window by calling the CreateWindowEx method with the dwExStyle parameter set to 0)
-int client(PCSTR Server_IP)
+char client(PCSTR Server_IP)
 {
 	WSADATA wsaData;
-	SOCKET ConnectSocket = INVALID_SOCKET;
 	struct addrinfo *result = NULL,
 		*ptr = NULL,
 		hints;
@@ -70,12 +73,30 @@ int client(PCSTR Server_IP)
 			return 1;
 		}
 
+		// register Socket in Message Queque from hidden window
+		cout << "WSAAsyncSelect()" << endl;
+		if (WSAAsyncSelect(ConnectSocket,hWnd,WM_SOCKET,FD_CONNECT|FD_READ|FD_CLOSE) == 0) {
+		}
+		else {
+			cout << "Fehler bei WSAAsyncSelect()" << endl;
+			cout << WSAGetLastError() << endl;
+		}
+
 		// Connect to server.
 		iResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
 		if (iResult == SOCKET_ERROR) {
-			closesocket(ConnectSocket);
-			ConnectSocket = INVALID_SOCKET;
-			continue;
+			if (WSAGetLastError() == WSAEWOULDBLOCK) { //connect noch nicht fertig
+				cout << "Warte..."; //auf Event FD_CONNECT
+				glob_tastensperre = 1;
+				// Senden-Schalfläche deaktivieren
+				//EnableWindow(GetDlgItem(hWnd, IDC_SEND),FALSE);
+			}
+			else {
+				closesocket(ConnectSocket);
+				ConnectSocket = INVALID_SOCKET;
+				continue;
+			}
+			
 		}
 		break;
 	}
@@ -88,6 +109,7 @@ int client(PCSTR Server_IP)
 		return 1;
 	}
 
+	/*
 	// Send an initial buffer
 	iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
 	if (iResult == SOCKET_ERROR) {
@@ -134,25 +156,22 @@ int client(PCSTR Server_IP)
 			printf("recv failed with error: %d\n", WSAGetLastError());
 
 	} while (iResult > 0);
-
-	// cleanup
-	closesocket(ConnectSocket);
-	WSACleanup();
+	*/
 
 	return 0;
 }
 
 void Verbindung_INIT() {
-	std::string zeichenkette;
+	string zeichenkette;
 
 	printf("Bitte Server-Adresse eingeben:\n");
 
 	//Eingabe IP-Adresse
-	std::getline(std::cin, zeichenkette); //IP-Notation oder Hostname, Eingabe prüfen?
+	getline(std::cin, zeichenkette); //IP-Notation oder Hostname, Eingabe prüfen?
 	PCSTR Server_IP = zeichenkette.c_str();
 
 	client(Server_IP);
-
+	
 	//Warten auf klingeln
 
 }
@@ -160,10 +179,80 @@ void Verbindung_INIT() {
 void senden(unsigned char Taste) {
 	// Tastendruck senden
 	// Taste = 1 (Karte aufdecken), = 2 (Klingeln)
+	if (ConnectSocket != INVALID_SOCKET)
+	{
+		char Buffer[255];
+		int  iSendLen=1;
+		Buffer[0]=Taste;
+		cout << "FD_WRITE" << endl;
+		// Serveradresse einlesen
+		//iSendLen = GetWindowText(GetDlgItem(hWnd, IDC_SENDDATA), Buffer, sizeof(Buffer));
+		cout << "send()...";
+
+		if (send(ConnectSocket, Buffer, iSendLen, 0) != SOCKET_ERROR)
+		{
+			cout << "... fertig" << endl;
+			//EnableWindow(GetDlgItem(hWnd, IDC_SEND), TRUE);
+		}
+		else
+		{
+			if (WSAGetLastError() == WSAEWOULDBLOCK)
+				cout << "... blockiert" << endl;
+			else
+				cout << "Fehler bei send()" << endl;
+
+			cout << "closesocket()" << endl;
+			//EnableWindow(GetDlgItem(hWnd, IDC_SEND), TRUE);
+			closesocket(ConnectSocket);
+			ConnectSocket = INVALID_SOCKET;
+			cout << "Abbruch" << endl;
+		}
+	}
 }
 
 void empfangen() {
 	// nimmt Spielfeld entgegen
 	// ruft C_Spiel - aktualisieren() auf
 	// C_Spiel - Tastendruck() informieren: sperre aufheben
+	unsigned char Spieleranzahl = 0;
+	unsigned char Kartenanzahl[4];
+	unsigned char aktuelle_Karte[4];
+	unsigned char Nachricht = 0;
+
+	char recvbuf[DEFAULT_BUFLEN];
+	int  iReadLen;
+
+	cout << "FD_READ" << endl;
+	// Alle verfügbaren Daten einlesen
+	iReadLen = recv(ConnectSocket, recvbuf, sizeof(recvbuf) - 1, 0);
+	if (iReadLen > 0) {
+		recvbuf[iReadLen] = 0;
+		if (debug) {
+			printf("Bytes received: %d\n", iReadLen);
+			cout << recvbuf << endl;
+		}
+		Spieleranzahl = recvbuf[0];
+		if (iReadLen != (Spieleranzahl * 2 + 2)) {
+			printf("Fehlerhafte Nachricht!\n");
+		}
+		else {
+			for (int i = 0; i < Spieleranzahl; i++) {
+				Kartenanzahl[i] = recvbuf[1 + i];
+				aktuelle_Karte[i] = recvbuf[1 + Spieleranzahl + i];
+			}
+			Nachricht = recvbuf[1 + Spieleranzahl * 2];
+			aktualisieren(Spieleranzahl, Kartenanzahl, aktuelle_Karte, Nachricht);
+		}
+	}
+}
+
+void cleanup() {
+	if (ConnectSocket != INVALID_SOCKET) {	// Socket schließen
+		glob_tastensperre = 1;
+		closesocket(ConnectSocket);
+		ConnectSocket = INVALID_SOCKET;
+		cout << "closesocket()" << endl;
+	}
+	WSACleanup();
+	DestroyWindow(hWnd);
 }

@@ -7,6 +7,10 @@
 
 #pragma comment(lib,"ws2_32.lib")
 
-unsigned char Verbindung_INIT();
+extern unsigned char Spieleranzahl;
+extern char Spielstart;
+
+void Verbindung_INIT();
 void broadcast(unsigned char, unsigned char *, unsigned char *, unsigned char);
 void empfangen();
+void cleanup();

@@ -7,6 +7,10 @@
 
 #include "targetver.h"
 
+#ifndef UNICODE
+#define UNICODE
+#endif
+
 /*
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -23,6 +27,6 @@
 #include <stdlib.h>
 #include <iostream>
 
-// cout und endl-Manipulator aus std Namensraum
-using std::cout;
-using std::endl;
+using namespace std;
+
+#define MAX_PLAYER 4
