@@ -6,6 +6,8 @@
 #include "C_Spiel.h"
 #include "C_Messung.h"
 
+MSG msg;
+
 //Event Handling for Hidden Window
 LRESULT CALLBACK WSClientProc(HWND hWnd, UINT msg, WPARAM wP, LPARAM lP)
 {
@@ -139,28 +141,27 @@ LRESULT CALLBACK WSClientProc(HWND hWnd, UINT msg, WPARAM wP, LPARAM lP)
 //Event Handling for Console Window
 bool WINAPI ConsoleHandler(DWORD CEvent)
 {
-	char mesg[128];
 
 	switch (CEvent)
 	{
 	case CTRL_C_EVENT:
-		//MessageBox(NULL,"CTRL+C received!", "CEvent", MB_OK);
+		printf("Ctrl-C event\n");
 		cleanup();
 		break;
 	case CTRL_BREAK_EVENT:
-		//MessageBox(NULL,"CTRL+BREAK received!", "CEvent", MB_OK);
+		printf("Ctrl-Break event\n");
 		cleanup();
 		break;
 	case CTRL_CLOSE_EVENT:
-		//MessageBox(NULL,"Program being closed!", "CEvent", MB_OK);
+		printf("Ctrl-Close event\n");
 		cleanup();
 		break;
 	case CTRL_LOGOFF_EVENT:
-		//MessageBox(NULL,"User is logging off!", "CEvent", MB_OK);
+		printf("Ctrl-Logoff event\n");
 		cleanup();
 		break;
 	case CTRL_SHUTDOWN_EVENT:
-		//MessageBox(NULL,"User is logging off!", "CEvent", MB_OK);
+		printf("Ctrl-Shutdown event\n");
 		cleanup();
 		break;
 	}
@@ -214,8 +215,19 @@ int main()
 	//Waiting for Events
 	while (42) {
 		//bei Broadcasts Event -> C_Verbindung empfangen()
-		
 		//bei Tastendruck Event C_Spiel Tastendruck()
+
+		if (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE))
+		{
+			/*
+			if (msg.message == WM_QUIT)
+			{
+				cleanup();
+			}
+			*/
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 		tastendruck();
 
 	}

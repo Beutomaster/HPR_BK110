@@ -9,8 +9,6 @@
 //Event Handling for Console Window
 bool WINAPI ConsoleHandler(DWORD CEvent)
 {
-	char mesg[128];
-
 	switch (CEvent)
 	{
 	case CTRL_C_EVENT:
@@ -48,7 +46,7 @@ int main(){
 	}
 
 	Verbindung_INIT();	//TCP-Port öffnen, Aufforderung zum Verbinden, Spielerhandle speichern, Spielstart wenn alle geklingelt haben
-	Spiel_INIT(); //Karten verteilen, Spielfeld verschicken, evtl. der Rest auch
+	//Spiel_INIT(); //Karten verteilen, Spielfeld verschicken, evtl. der Rest auch
 	cout << endl << "Abbruch mit ESC";
 	while (42) { // ende wenn Spiel beendet / "esc" auf Server
 		// S_Verbindung - empfangen() (fragt Paketeingang ab)

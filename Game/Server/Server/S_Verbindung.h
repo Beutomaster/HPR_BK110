@@ -9,6 +9,7 @@
 
 extern unsigned char Spieleranzahl;
 extern char Spielstart;
+extern char Server_on;
 
 void Verbindung_INIT();
 void broadcast(unsigned char, unsigned char *, unsigned char *, unsigned char);

@@ -84,20 +84,22 @@ void tastendruck() {
 	// Nach Tastendruck sperrung bis nächster Broadcast
 
 	unsigned char KeyInfo = 0;
-	while (42) { //!glob_tastensperre) {
-		KeyInfo = _getch();
+	//while (42) { //!glob_tastensperre) {
+		KeyInfo = _getch_nolock();
 		switch (KeyInfo) {
-		case 'a': senden('a');//1);	// aufdecken
+		//case 'a': senden('a');	// aufdecken
+		case 'a': senden(1);	// aufdecken
 			glob_tastensperre = 1;
 			break;
-		case ' ': senden('k');//2);	// klingeln
+		//case ' ': senden('k');	// klingeln
+		case ' ': senden(2);	// klingeln
 			glob_tastensperre = 1;
 			break;
 		case 'q': //verlässt noch nicht das programm
 			cleanup();
 			return;
 		}
-	}
+	//}
 }
 
 // Hilfsfunktion zur Konsolenausgabe

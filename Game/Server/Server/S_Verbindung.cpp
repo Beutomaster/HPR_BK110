@@ -18,6 +18,8 @@ char wtcp_serv();
 void read_and_echo(SOCKET, unsigned char);
 void new_player(SOCKET);
 char Spielstart = 0;
+char Server_on = 1;
+
 struct Spielteilnehmer {
 	SOCKET Socket[MAX_PLAYER];
 	unsigned char Start[MAX_PLAYER];
@@ -93,7 +95,7 @@ char wtcp_serv() //returns Spieleranzahl
 	cout << "Warte auf Spieler" << endl;
 
 	//Schleife muss noch getrennt werden für Warten auf Spieler und Spiel
-	for (;; )
+	while (Server_on)
 	{
 		FD_ZERO((fd_set FAR *)&readfds);		// clear fd_count (struct fd_set)
 		FD_SET(MySock, (fd_set FAR *)&readfds);
@@ -142,6 +144,7 @@ char wtcp_serv() //returns Spieleranzahl
 					for (Spieler = 0; Spieler < MAX_PLAYER; Spieler++) {
 						if(x==Player.Socket[Spieler-1]) break;
 					}
+					cout << "Incomming Message from Spieler: " << (int) Spieler << endl;
 					read_and_echo(x, Spieler); // nicht fertig
 				}
 				else {
@@ -171,11 +174,15 @@ void read_and_echo(SOCKET iClient, unsigned char Spieler)	// Read and echo data
 	}
 	else
 	{
-		sprintf(szBuffer, " %d                 %d", iClient, iLen);
-		cout << szBuffer << endl;
+		sprintf(szBuffer, "Handle: %d, Bytes: %d, ", iClient, iLen);
+		cout << szBuffer;
 
 		buffer[iLen] = 0;						// mark String end
-		cout << buffer << endl;
+		cout << "Message:";
+		for (int i = 0; i < iLen; i++) {
+			cout << " " << (int)buffer[i];
+		}
+		cout << endl;
 
 		if (iLen != 1) {
 			printf("Fehlerhafte Nachricht!\n");
@@ -184,10 +191,16 @@ void read_and_echo(SOCKET iClient, unsigned char Spieler)	// Read and echo data
 			Taste = buffer[0];
 			if (Spielstart) aktualisieren(Spieler, Taste);
 			else {
-				if (Taste == 1) {
+				if (Taste == 2) {
 					Player.Start[Spieler - 1] = 1;
-					for (int i = 0; i < Spieleranzahl; i++) {
-						Spielstart |= Spielstart;
+					if (Spieleranzahl > 1) {
+						for (int i = 0; i < Spieleranzahl; i++) {
+							Spielstart = Spielstart || Player.Start[i];
+						}
+					}
+					if (Spielstart) {
+						cout << "Spielstart\n";
+						Spiel_INIT();
 					}
 				}
 			}
@@ -218,12 +231,12 @@ void new_player(SOCKET MySock)	// accept new connection
 	}
 
 	remoteIP = inet_ntoa(peer.sin_addr);		// IP-address -> Dot-Notation
-	sprintf(szBuffer, "Open Connection from %s - Port %d (Handle %d)",
-		remoteIP, htons(peer.sin_port), iClient);
-	//ShowStatus(hWnd, szBuffer, ID_LISTING);
+	sprintf(szBuffer, "Open Connection from %s - Port %d (Handle %d)", remoteIP, htons(peer.sin_port), iClient);
+	cout << szBuffer << endl;
 	in_use[iClient] = 1;
 	Player.Socket[Spieleranzahl]= iClient;
 	Spieleranzahl++; // nicht fertig
+	cout << "Spieleranzahl: " << (int) Spieleranzahl << endl;
 }
 
 void Verbindung_INIT() {
@@ -253,9 +266,9 @@ void broadcast(unsigned char Spieleranzahl, unsigned char *Kartenanzahl, unsigne
 	buffer[1 + Spieleranzahl * 2] = Nachricht;
 
 	//send
-	cout << "send()" << endl;
 	for (iClient = 0; iClient < MAX_SOCKETS; iClient++) {
 		if (in_use[iClient]) {
+			cout << "send() to " << iClient << endl;
 			if (send(iClient, (LPSTR)buffer, iLen, 0) < 0)
 			{
 				in_use[iClient] = 0;
@@ -279,5 +292,6 @@ void cleanup() {
 	}
 	(void)closesocket(MySock);
 	WSACleanup();
+	Server_on = 0;
 	return;
 }

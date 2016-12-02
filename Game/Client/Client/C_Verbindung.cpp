@@ -229,7 +229,11 @@ void empfangen() {
 		recvbuf[iReadLen] = 0;
 		if (debug) {
 			printf("Bytes received: %d\n", iReadLen);
-			cout << recvbuf << endl;
+			cout << "Message:";
+			for (int i = 0; i < iReadLen; i++) {
+				cout << " " << (int)recvbuf[i];
+			}
+			cout << endl;
 		}
 		Spieleranzahl = recvbuf[0];
 		if (iReadLen != (Spieleranzahl * 2 + 2)) {
