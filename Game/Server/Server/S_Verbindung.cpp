@@ -89,10 +89,10 @@ char wtcp_serv() //returns 0 on error, 1 if normally closed
 		return 0;
 	}
 
-	cout << endl;
+	cout << endl << endl;
 
 	cout << "Server gestartet" << endl;
-	cout << "Warte auf Spieler" << endl;
+	cout << "Warte auf Spieler" << endl << endl;
 
 	//Empfangsschleife
 	while (Server_on)
@@ -144,7 +144,7 @@ char wtcp_serv() //returns 0 on error, 1 if normally closed
 					for (Spieler = 0; Spieler < MAX_PLAYER; Spieler++) {
 						if(x==Player.Socket[Spieler-1]) break;
 					}
-					cout << "Incomming Message from Spieler: " << (int) Spieler << endl;
+					cout << "Incomming Message from Player: " << (int) Spieler << endl;
 					empfangen(x, Spieler);
 				}
 				else {
@@ -189,6 +189,15 @@ void new_player(SOCKET MySock)	// accept new connection
 	Player.Socket[Spieleranzahl] = iClient;
 	Spieleranzahl++;
 	cout << "Spieleranzahl: " << (int)Spieleranzahl << endl;
+	//Spielernummer senden
+	char iLen = 1;
+	buffer[0] = Spieleranzahl;
+	if (send(iClient, (LPSTR)buffer, iLen, 0) < 0)
+	{
+		in_use[iClient] = 0;
+		(void)closesocket(iClient);
+		cout << "closesocket()" << endl;
+	}
 }
 
 void empfangen(SOCKET iClient, unsigned char Spieler)	// Read and send update broadcast

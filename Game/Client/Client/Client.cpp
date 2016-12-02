@@ -22,7 +22,13 @@ LRESULT CALLBACK WSClientProc(HWND hWnd, UINT msg, WPARAM wP, LPARAM lP)
 			cout << "FD_CONNECT: ";
 			if (WSAGETSELECTERROR(lP) == 0)
 			{
-				cout << "erfolgreich!" << endl;
+				cout << "erfolgreich!" << endl << endl;
+				cout << "Ziel des Spiels ist es alle Karten zu gewinnen." << endl;
+				cout << "Wer keine Karten mehr hat scheidet aus." << endl;
+				cout << "Die Spieler muessen reihum die naechste Karte mit der Taste a von ihrem Stapel aufdecken." << endl;
+				cout << "Wer mit Leertaste klingelt, wenn insgesamt fuenf Augen von der jeweilgen Farbe A bis D auf dem Tisch liegen, gewinnt alle aufgedeckten Karten." << endl;
+				cout << "Wer falsch klingelt, muss an jeden Spieler eine Karte abgeben." << endl << endl;
+				cout << "Wenn mindestens zwei Spieler mit dem Server verbunden sind und geklingelt haben, startet das Spiel." << endl << endl;
 				glob_tastensperre = 0;
 			}
 			else
@@ -105,6 +111,8 @@ int main()
 		//cout << GetLastError() << endl;
 		if (hWnd == NULL) cout << "Hidden Message-Window could not be created!\n";
 	} else cout << "Could not create HiddenWindow class!\n";
+
+	cout << "H A L L I G A L L I" << endl << endl;
 
 	while (Verbindung_INIT()); //Eingabe IP-Adresse, Verbindung aufbauen bis Erfolg
 

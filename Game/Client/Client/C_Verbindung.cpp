@@ -14,6 +14,7 @@
 HWND hWnd = NULL;
 char debug=1; //Debug-Message-Switch
 SOCKET ConnectSocket = INVALID_SOCKET;				// Über diesen Socket wird die Verbindung zum Server hergestellt
+unsigned char Spieler = 0;
 
 char Verbindung_INIT() {
 	string zeichenkette;
@@ -23,6 +24,8 @@ char Verbindung_INIT() {
 	//Eingabe IP-Adresse
 	getline(std::cin, zeichenkette); //IP-Notation oder Hostname, Eingabe prüfen?
 	PCSTR Server_IP = zeichenkette.c_str();
+
+	cout << endl;
 
 	WSADATA wsaData;
 	struct addrinfo *result = NULL,
@@ -161,18 +164,24 @@ void empfangen() {
 			}
 			cout << endl;
 		}
-		Spieleranzahl = recvbuf[0];
-		if (iReadLen != (Spieleranzahl * 2 + 2)) {
-			printf("Fehlerhafte Nachricht!\n");
+		if (!Spieler) {
+			Spieler = recvbuf[0];
+			cout << endl << "Spieler: " << (int)Spieler << endl << endl;
 		}
 		else {
-			for (int i = 0; i < Spieleranzahl; i++) {
-				Kartenanzahl[i] = recvbuf[1 + i];
-				aktuelle_Karte[i] = recvbuf[1 + Spieleranzahl + i];
+			Spieleranzahl = recvbuf[0];
+			if (iReadLen != (Spieleranzahl * 2 + 2)) {
+				printf("Fehlerhafte Nachricht!\n");
 			}
-			Nachricht = recvbuf[1 + Spieleranzahl * 2];
-			aktualisieren(Spieleranzahl, Kartenanzahl, aktuelle_Karte, Nachricht);
-			glob_tastensperre = 0;
+			else {
+				for (int i = 0; i < Spieleranzahl; i++) {
+					Kartenanzahl[i] = recvbuf[1 + i];
+					aktuelle_Karte[i] = recvbuf[1 + Spieleranzahl + i];
+				}
+				Nachricht = recvbuf[1 + Spieleranzahl * 2];
+				aktualisieren(Spieleranzahl, Kartenanzahl, aktuelle_Karte, Nachricht);
+				glob_tastensperre = 0;
+			}
 		}
 	}
 }
