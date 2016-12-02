@@ -1,8 +1,7 @@
 #pragma once
 
-#ifndef C_Spiel_h
+extern unsigned char glob_tastensperre;
 
-void aktualisieren(char, char*, char*, char);
+void aktualisieren(unsigned char, unsigned char*, unsigned char*, unsigned char);
 void tastendruck();
-
-#endif // !C_Spiel_h
+void gotoxy(int, int);

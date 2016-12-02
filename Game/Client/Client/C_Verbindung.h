@@ -1,9 +1,10 @@
 #pragma once
 
-#ifndef C_Verbindung_h
+extern char debug;
+extern SOCKET ConnectSocket;
+extern HWND hWnd;
 
-void Verbindung_INIT();
-void senden(char);
+char Verbindung_INIT();
+void senden(unsigned char);
 void empfangen();
-
-#endif // !C_Verbindung_h
+void cleanup();
