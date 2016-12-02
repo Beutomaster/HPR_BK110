@@ -12,23 +12,23 @@ bool WINAPI ConsoleHandler(DWORD CEvent)
 	switch (CEvent)
 	{
 	case CTRL_C_EVENT:
-		//MessageBox(NULL,"CTRL+C received!", "CEvent", MB_OK);
+		printf("Ctrl-C event\n");
 		cleanup();
 		break;
 	case CTRL_BREAK_EVENT:
-		//MessageBox(NULL,"CTRL+BREAK received!", "CEvent", MB_OK);
+		printf("Ctrl-Break event\n");
 		cleanup();
 		break;
 	case CTRL_CLOSE_EVENT:
-		//MessageBox(NULL,"Program being closed!", "CEvent", MB_OK);
+		printf("Ctrl-Close event\n");
 		cleanup();
 		break;
 	case CTRL_LOGOFF_EVENT:
-		//MessageBox(NULL,"User is logging off!", "CEvent", MB_OK);
+		printf("Ctrl-Logoff event\n");
 		cleanup();
 		break;
 	case CTRL_SHUTDOWN_EVENT:
-		//MessageBox(NULL,"User is logging off!", "CEvent", MB_OK);
+		printf("Ctrl-Shutdown event\n");
 		cleanup();
 		break;
 	}
@@ -46,8 +46,8 @@ int main(){
 	}
 
 	Verbindung_INIT();	//TCP-Port öffnen, Aufforderung zum Verbinden, Spielerhandle speichern, Spielstart wenn alle geklingelt haben
-	//Spiel_INIT(); //Karten verteilen, Spielfeld verschicken, evtl. der Rest auch
-	cout << endl << "Abbruch mit ESC";
+	//Spiel_INIT(); //Karten verteilen, Spielfeld verschicken (wird nun auch in Empfangsschleife gestartet)
+	cout << endl << "Abbruch mit ESC"; //
 	while (42) { // ende wenn Spiel beendet / "esc" auf Server
 		// S_Verbindung - empfangen() (fragt Paketeingang ab)
 	}

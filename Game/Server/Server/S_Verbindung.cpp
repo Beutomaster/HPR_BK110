@@ -15,7 +15,7 @@ char    szBuffer[256];						// used for messages
 char FAR* remoteIP;
 
 char wtcp_serv();
-void read_and_echo(SOCKET, unsigned char);
+void read_and_update(SOCKET, unsigned char);
 void new_player(SOCKET);
 char Spielstart = 0;
 char Server_on = 1;
@@ -28,7 +28,7 @@ struct Spielteilnehmer {
 
 SOCKET MySock, x;
 
-char wtcp_serv() //returns Spieleranzahl
+char wtcp_serv() //returns 0 on error, 1 if normally closed
 {
 	struct sockaddr_in addr;
 	int adresslaenge;
@@ -94,7 +94,7 @@ char wtcp_serv() //returns Spieleranzahl
 	cout << "Server gestartet" << endl;
 	cout << "Warte auf Spieler" << endl;
 
-	//Schleife muss noch getrennt werden für Warten auf Spieler und Spiel
+	//Empfangsschleife
 	while (Server_on)
 	{
 		FD_ZERO((fd_set FAR *)&readfds);		// clear fd_count (struct fd_set)
@@ -145,7 +145,7 @@ char wtcp_serv() //returns Spieleranzahl
 						if(x==Player.Socket[Spieler-1]) break;
 					}
 					cout << "Incomming Message from Spieler: " << (int) Spieler << endl;
-					read_and_echo(x, Spieler); // nicht fertig
+					read_and_update(x, Spieler);
 				}
 				else {
 					if (Spieleranzahl <= MAX_PLAYER && !Spielstart ) {
@@ -158,7 +158,7 @@ char wtcp_serv() //returns Spieleranzahl
 	return 1;
 }
 
-void read_and_echo(SOCKET iClient, unsigned char Spieler)	// Read and echo data
+void read_and_update(SOCKET iClient, unsigned char Spieler)	// Read and send update broadcast
 {
 	int iLen;
 	unsigned char Taste = 0;
@@ -194,8 +194,9 @@ void read_and_echo(SOCKET iClient, unsigned char Spieler)	// Read and echo data
 				if (Taste == 2) {
 					Player.Start[Spieler - 1] = 1;
 					if (Spieleranzahl > 1) {
+						Spielstart = 1;
 						for (int i = 0; i < Spieleranzahl; i++) {
-							Spielstart = Spielstart || Player.Start[i];
+							Spielstart = Spielstart && Player.Start[i];
 						}
 					}
 					if (Spielstart) {
@@ -206,6 +207,8 @@ void read_and_echo(SOCKET iClient, unsigned char Spieler)	// Read and echo data
 			}
 		}
 
+		/*
+		//echo
 		cout << "send()" << endl;
 		if (send(iClient, (LPSTR)buffer, iLen, 0) < 0)
 		{
@@ -213,6 +216,7 @@ void read_and_echo(SOCKET iClient, unsigned char Spieler)	// Read and echo data
 			(void)closesocket(iClient);
 			cout << "closesocket()" << endl;
 		}
+		*/
 	}
 }
 
@@ -235,7 +239,7 @@ void new_player(SOCKET MySock)	// accept new connection
 	cout << szBuffer << endl;
 	in_use[iClient] = 1;
 	Player.Socket[Spieleranzahl]= iClient;
-	Spieleranzahl++; // nicht fertig
+	Spieleranzahl++;
 	cout << "Spieleranzahl: " << (int) Spieleranzahl << endl;
 }
 
