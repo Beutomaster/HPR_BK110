@@ -32,28 +32,30 @@ void aktualisieren(unsigned char Spieleranzahl, unsigned char *kartenanzahl, uns
 		}
 	}
 	system("CLS");
-	cout << hex << (int)Nachricht << dec;
+	cout << "H A L L I G A L L I" << endl << endl;
+	cout << "Spieler: " << (int)Spieler << endl << endl;
+	//cout << hex << (int)Nachricht << dec;
 	// empfangenes Spielfeld ausgeben
 	switch ((int)Spieleranzahl) {
 	case 4:
-		gotoxy(20, 10);
+		gotoxy(5, 11);
 		cout << "Spieler 4: " << setw(2) << (int)kartenanzahl[3];
-		gotoxy(40, 10);
+		gotoxy(20, 11);
 		cout << setw(10) << left << spieler[3];
 	case 3:
-		gotoxy(45, 17);
+		gotoxy(33, 18);
 		cout << "Spieler 3: " << setw(2) << (int)kartenanzahl[2];
-		gotoxy(45, 12);
+		gotoxy(35, 13);
 		cout << setw(10) << left << spieler[2];
 	case 2:
-		gotoxy(70, 10);
+		gotoxy(62, 11);
 		cout << "Spieler 2: " << setw(2) << (int)kartenanzahl[1];
-		gotoxy(55, 10);
+		gotoxy(50, 11);
 		cout << setw(10) << left << spieler[1];
 	default:
-		gotoxy(45, 3);
+		gotoxy(33, 4);
 		cout << "Spieler 1: " << setw(2) << (int)kartenanzahl[0];
-		gotoxy(45, 8);
+		gotoxy(35, 9);
 		cout << setw(10) << left << spieler[0];
 	}
 
@@ -111,6 +113,7 @@ void tastendruck() {
 // Hilfsfunktion zur Konsolenausgabe
 void gotoxy(int x, int y)
 {
+	//Standard-Consolen-Fenster unter Windows werden mit 80 Zeichen Breite und 25 Zeilen Höhe gestartet
 	COORD coord;
 	coord.X = x;
 	coord.Y = y;

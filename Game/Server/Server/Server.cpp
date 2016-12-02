@@ -36,6 +36,8 @@ bool WINAPI ConsoleHandler(DWORD CEvent)
 }
 
 int main(){
+	cout << "H A L L I G A L L I - S E R V E R" << endl << endl;
+
 	//Event-Handler für Consolen-Fenster (zum Aufräumen bei Programmabbruch)
 	if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler, TRUE) == FALSE)
 	{
@@ -45,13 +47,9 @@ int main(){
 		return -1;
 	}
 
-	Verbindung_INIT();	//TCP-Port öffnen, Aufforderung zum Verbinden, Spielerhandle speichern, Spielstart wenn alle geklingelt haben
-	//Spiel_INIT(); //Karten verteilen, Spielfeld verschicken (wird nun auch in Empfangsschleife gestartet)
-	cout << endl << "Abbruch mit ESC"; //
-	while (42) { // ende wenn Spiel beendet / "esc" auf Server
-		// S_Verbindung - empfangen() (fragt Paketeingang ab)
-	}
-
+	Verbindung_INIT();	//TCP-Port öffnen, Aufforderung zum Verbinden, Spielerhandle speichern
+						//Spielstart mit Spiel_INIT(), wenn alle geklingelt haben.
+						//Spielfeld aktualisieren und verschicken
 
     return 0;
 }
