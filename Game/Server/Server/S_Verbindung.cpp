@@ -15,7 +15,7 @@ char    szBuffer[256];						// used for messages
 char FAR* remoteIP;
 
 char wtcp_serv();
-void read_and_update(SOCKET, unsigned char);
+void empfangen(SOCKET, unsigned char);
 void new_player(SOCKET);
 char Spielstart = 0;
 char Server_on = 1;
@@ -145,7 +145,7 @@ char wtcp_serv() //returns 0 on error, 1 if normally closed
 						if(x==Player.Socket[Spieler-1]) break;
 					}
 					cout << "Incomming Message from Spieler: " << (int) Spieler << endl;
-					read_and_update(x, Spieler);
+					empfangen(x, Spieler);
 				}
 				else {
 					if (Spieleranzahl <= MAX_PLAYER && !Spielstart ) {
@@ -158,7 +158,42 @@ char wtcp_serv() //returns 0 on error, 1 if normally closed
 	return 1;
 }
 
-void read_and_update(SOCKET iClient, unsigned char Spieler)	// Read and send update broadcast
+void Verbindung_INIT() {
+	//TCP-Port öffnen, Aufforderung zum Verbinden, Spielerhandle speichern, Spielstart wenn alle geklingelt haben
+	Spieleranzahl = 0;
+	for (char i = 0; i < MAX_PLAYER; i++) {
+		Player.Start[i]=0;
+	}
+	while (!wtcp_serv()) {
+	}
+}
+
+void new_player(SOCKET MySock)	// accept new connection
+{
+	SOCKET  iClient;
+	struct	sockaddr_in peer;
+	int		peersize = sizeof(peer);
+
+	cout << "accept()" << endl;
+	if ((iClient = accept(MySock,
+		(struct sockaddr FAR *)&peer, (LPINT)&peersize)) < 0)
+	{
+		cout << "WARNING: Active connections: accept" << endl;
+		return;
+	}
+
+	remoteIP = inet_ntoa(peer.sin_addr);		// IP-address -> Dot-Notation
+	sprintf(szBuffer, "Open Connection from %s - Port %d (Handle %d)", remoteIP, htons(peer.sin_port), iClient);
+	cout << szBuffer << endl;
+	in_use[iClient] = 1;
+	Player.Socket[Spieleranzahl] = iClient;
+	Spieleranzahl++;
+	cout << "Spieleranzahl: " << (int)Spieleranzahl << endl;
+}
+
+void empfangen(SOCKET iClient, unsigned char Spieler)	// Read and send update broadcast
+														// nimmt Tastendruck entgegen (mit Spielerhandle)
+														// ruft S_Spiel - aktualisieren(unsigned char Spieler, unsigned char Taste) bei Paketeingang auf
 {
 	int iLen;
 	unsigned char Taste = 0;
@@ -212,44 +247,11 @@ void read_and_update(SOCKET iClient, unsigned char Spieler)	// Read and send upd
 		cout << "send()" << endl;
 		if (send(iClient, (LPSTR)buffer, iLen, 0) < 0)
 		{
-			in_use[iClient] = 0;
-			(void)closesocket(iClient);
-			cout << "closesocket()" << endl;
+		in_use[iClient] = 0;
+		(void)closesocket(iClient);
+		cout << "closesocket()" << endl;
 		}
 		*/
-	}
-}
-
-void new_player(SOCKET MySock)	// accept new connection
-{
-	SOCKET  iClient;
-	struct	sockaddr_in peer;
-	int		peersize = sizeof(peer);
-
-	cout << "accept()" << endl;
-	if ((iClient = accept(MySock,
-		(struct sockaddr FAR *)&peer, (LPINT)&peersize)) < 0)
-	{
-		cout << "WARNING: Active connections: accept" << endl;
-		return;
-	}
-
-	remoteIP = inet_ntoa(peer.sin_addr);		// IP-address -> Dot-Notation
-	sprintf(szBuffer, "Open Connection from %s - Port %d (Handle %d)", remoteIP, htons(peer.sin_port), iClient);
-	cout << szBuffer << endl;
-	in_use[iClient] = 1;
-	Player.Socket[Spieleranzahl]= iClient;
-	Spieleranzahl++;
-	cout << "Spieleranzahl: " << (int) Spieleranzahl << endl;
-}
-
-void Verbindung_INIT() {
-	//TCP-Port öffnen, Aufforderung zum Verbinden, Spielerhandle speichern, Spielstart wenn alle geklingelt haben
-	Spieleranzahl = 0;
-	for (char i = 0; i < MAX_PLAYER; i++) {
-		Player.Start[i]=0;
-	}
-	while (!wtcp_serv()) {
 	}
 }
 
@@ -281,11 +283,6 @@ void broadcast(unsigned char Spieleranzahl, unsigned char *Kartenanzahl, unsigne
 			}
 		}	
 	}	
-}
-
-void empfangen() {
-	// nimmt Tastendruck entgegen (mit Spielerhandle)
-	// ruft S_Spiel - aktualisieren(unsigned char Spieler, unsigned char Taste) bei Paketeingang auf
 }
 
 void cleanup() {

@@ -1,6 +1,2 @@
-﻿  C_Verbindung.cpp
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\c_verbindung.cpp(31): warning C4101: "Kartenanzahl": Unreferenzierte lokale Variable
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\c_verbindung.cpp(27): warning C4101: "recvbuf": Unreferenzierte lokale Variable
-c:\daten\fh-kiel\hpr_bk110\hpr_bk110\game\client\client\c_verbindung.cpp(32): warning C4101: "aktuelle_Karte": Unreferenzierte lokale Variable
-  Client.vcxproj -> C:\Daten\FH-Kiel\HPR_BK110\HPR_BK110\Game\Client\Debug\Client.exe
+﻿  Client.vcxproj -> C:\Daten\FH-Kiel\HPR_BK110\HPR_BK110\Game\Client\Debug\Client.exe
   Client.vcxproj -> C:\Daten\FH-Kiel\HPR_BK110\HPR_BK110\Game\Client\Debug\Client.pdb (Full PDB)

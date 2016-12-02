@@ -46,93 +46,6 @@ LRESULT CALLBACK WSClientProc(HWND hWnd, UINT msg, WPARAM wP, LPARAM lP)
 		}
 	}
 	break;
-
-	/*
-	case WM_COMMAND:						// Schaltflächen-Nachrichten
-		switch (LOWORD(wP))
-		{
-		case IDCANCEL:                  // CloseBox des Fensters
-			EndDialog(hWnd, 0);
-			break;
-
-
-		case IDC_CONNECT:
-		{ SOCKADDR_IN sin;
-		char remoteIP[64];
-		char Buffer[80];
-		// Zieladresse auslesen
-		GetWindowText(GetDlgItem(hWnd, IDC_DESTADDRESS),remoteIP,sizeof(remoteIP));
-
-		memset(&sin, 0, sizeof(sin));
-		sin.sin_family = AF_INET;
-		sin.sin_port = htons(SERVER_PORT);
-		// IP-Adresse -> Dot Notation
-		cout << "inet_addr()" << endl;
-		sin.sin_addr.s_addr = inet_addr(remoteIP);
-
-		// Adresse über DNS auflösen
-		if (sin.sin_addr.s_addr == INADDR_NONE)
-		{
-			HOSTENT *he;
-			cout << "gethostbyname()" << endl;
-			he = gethostbyname(remoteIP);
-			if (he)
-				sin.sin_addr.s_addr = *((DWORD*)he->h_addr);
-			else
-			{
-				cout << "ungülitige Internet-Adresse" << endl;
-				break;
-			}
-		}
-		// Zieladresse protokollieren
-		wsprintf(Buffer, "Adresse: 0x%08lx",
-			ntohl(sin.sin_addr.s_addr));
-		cout << Buffer << endl;
-		// Socket erzeugen
-		cout << "socket()" << endl;
-		ConnectSocket = socket(AF_INET, SOCK_STREAM, 0);
-
-		if (ConnectSocket == INVALID_SOCKET)
-		{
-			cout << "Fehler beim Allokieren des Connect-Sockets" << endl;
-			cout << "Kein Verbindungsaufbau möglich" << endl;
-			break;
-		}
-
-		// asynchronen Mode aktivieren
-		cout << "WSAAsyncSelect()" << endl;
-		if (WSAAsyncSelect(ConnectSocket,
-			hWnd,
-			WM_SOCKET,
-			FD_CONNECT |
-			FD_READ |
-			FD_CLOSE) == 0)
-		{
-			cout << "connect()" << endl;
-			if (connect(ConnectSocket, (SOCKADDR*)&sin, sizeof(sin))
-				== SOCKET_ERROR)
-			{
-				if (WSAGetLastError() == WSAEWOULDBLOCK)
-				{
-					cout << "Warte..." << endl;
-					// Senden-Schalfläche deaktivieren
-					//EnableWindow(GetDlgItem(hWnd, IDC_SEND),FALSE);
-					break;
-				}
-			}
-		}
-		else
-			cout << "Fehler bei WSAAsyncSelect()" << endl;
-
-		cout << "closesocket()" << endl;
-		closesocket(ConnectSocket);
-		ConnectSocket = INVALID_SOCKET;
-		}
-		break;
-		}
-		break;
-		*/
-
 	}
 	return DefWindowProc(hWnd, msg, wP, lP);
 	//return FALSE;
@@ -193,42 +106,19 @@ int main()
 		if (hWnd == NULL) cout << "Hidden Message-Window could not be created!\n";
 	} else cout << "Could not create HiddenWindow class!\n";
 
-	Verbindung_INIT(); //Eingabe IP-Adresse, Warten auf klingeln, evtl. der Rest auch
-	//cout << "Verbindung_INIT() ended" << endl;
-
-	/*
-	// Filter Main Message Queque for Socket-Events (maybe an alternative to a hidden Window)
-	while ((bRet = GetMessage(&msg, NULL, 0, 0)) != 0) {
-
-			if (bRet == -1) {
-				// handle the error and possibly exit
-			}
-			else {
-				if (FilterMessage(&msg) == 0) { // <-- Function you write
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-				}
-			}
-	}
-	*/
+	while (Verbindung_INIT()); //Eingabe IP-Adresse, Verbindung aufbauen bis Erfolg
 
 	//Waiting for Events
-	while (42) {
+	while (42) { //lastet den Prozessor voll aus, mit Tastendruck-Events könnte man GetMessage benutzen
 		//bei Broadcasts Event -> C_Verbindung empfangen()
-		//bei Tastendruck Event C_Spiel Tastendruck()
+		//bei Tastendruck Event C_Verbindung senden()
 
 		if (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE))
 		{
-			/*
-			if (msg.message == WM_QUIT)
-			{
-				cleanup();
-			}
-			*/
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		tastendruck();
+		tastendruck(); //prüft ob Taste gedrückt wurde und sendet diese (falls nicht gesperrt)
 
 	}
     return 0;

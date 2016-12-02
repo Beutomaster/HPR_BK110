@@ -13,5 +13,4 @@ extern char Server_on;
 
 void Verbindung_INIT();
 void broadcast(unsigned char, unsigned char *, unsigned char *, unsigned char);
-void empfangen();
 void cleanup();

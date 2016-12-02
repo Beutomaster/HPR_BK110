@@ -74,7 +74,6 @@ void aktualisieren(unsigned char Spieleranzahl, unsigned char *kartenanzahl, uns
 	else {
 		cout << "Spieler " << (Nachricht & 0x03) + 1 << " ist an der Reihe." << endl;
 	}
-	glob_tastensperre = 0;
 } 
 
 void tastendruck() {
@@ -84,22 +83,29 @@ void tastendruck() {
 	// Nach Tastendruck sperrung bis nächster Broadcast
 
 	unsigned char KeyInfo = 0;
-	//while (42) { //!glob_tastensperre) {
+	
+	if (_kbhit()) { // Nur wenn auch eine Taste gedrückt ist
 		KeyInfo = _getch_nolock();
+		//cout << "Taste: " << KeyInfo << endl;
 		switch (KeyInfo) {
-		//case 'a': senden('a');	// aufdecken
-		case 'a': senden(1);	// aufdecken
-			glob_tastensperre = 1;
+		case 'a': 
+			if (!glob_tastensperre) {
+				senden(1);	// aufdecken
+				glob_tastensperre = 1;
+			}
 			break;
-		//case ' ': senden('k');	// klingeln
-		case ' ': senden(2);	// klingeln
-			glob_tastensperre = 1;
+		case ' ': 
+			if (!glob_tastensperre) {
+				senden(2);	// klingeln
+				glob_tastensperre = 1;
+			}
 			break;
 		case 'q': //verlässt noch nicht das programm
 			cleanup();
 			return;
+			
 		}
-	//}
+	}
 }
 
 // Hilfsfunktion zur Konsolenausgabe
