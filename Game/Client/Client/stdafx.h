@@ -26,6 +26,7 @@
 // TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
 #include <string>
 
 #include <winsock2.h>

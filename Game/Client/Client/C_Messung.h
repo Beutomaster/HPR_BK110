@@ -1,5 +1,6 @@
 #pragma once
 
+extern fstream file;
 extern char Messung;
 extern LONGLONG g_Frequency, g_CurentCount, g_LastCount;
 

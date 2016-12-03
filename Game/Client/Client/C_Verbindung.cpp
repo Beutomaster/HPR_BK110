@@ -201,5 +201,6 @@ void cleanup() {
 	}
 	WSACleanup();
 	DestroyWindow(hWnd);
+	file.close();
 	Client_on = 0;
 }
