@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "C_Verbindung.h"
 #include "C_Spiel.h"
+#include "C_Messung.h"
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -120,6 +121,10 @@ void senden(unsigned char Taste) {
 		cout << "FD_WRITE" << endl;
 		
 		cout << "send()...";
+
+		if (Messung == 2) Messung = 0;  // Startklingeln überspringen, da keine Antwort
+		else messung_start(); //Zeitmessung starten
+
 		if (send(ConnectSocket, Buffer, iSendLen, 0) != SOCKET_ERROR)
 		{
 			cout << "... fertig" << endl;
@@ -181,6 +186,7 @@ void empfangen() {
 				Nachricht = recvbuf[1 + Spieleranzahl * 2];
 				aktualisieren(Spieleranzahl, Kartenanzahl, aktuelle_Karte, Nachricht);
 				glob_tastensperre = 0;
+				if (Messung) messung_auswerten(); //Zeitmessung auswerten und anzeigen
 			}
 		}
 	}

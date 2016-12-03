@@ -7,7 +7,6 @@
 #include "C_Messung.h"
 
 MSG msg;
-//HANDLE ghEvents[2];
 char Client_on = 1;
 
 DWORD WINAPI ThreadProc(LPVOID);
@@ -50,6 +49,7 @@ LRESULT CALLBACK WSClientProc(HWND hWnd, UINT msg, WPARAM wP, LPARAM lP)
 			break;
 
 		case FD_READ:					// Daten eingegangen
+			if (Messung) messung_stop(); //Zeitmessung stoppen
 			empfangen();
 			break;
 
@@ -134,6 +134,8 @@ int main()
 	} else cout << "Could not create HiddenWindow class!\n";
 
 	cout << "H A L L I G A L L I" << endl << endl;
+
+	messung_init(); //Frequenz von Counter abfragen
 
 	while (Verbindung_INIT()); //Eingabe IP-Adresse, Verbindung aufbauen bis Erfolg
 
