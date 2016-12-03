@@ -195,4 +195,5 @@ void cleanup() {
 	}
 	WSACleanup();
 	DestroyWindow(hWnd);
+	Client_on = 0;
 }

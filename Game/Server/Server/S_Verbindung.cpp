@@ -192,6 +192,7 @@ void new_player(SOCKET MySock)	// accept new connection
 	//Spielernummer senden
 	char iLen = 1;
 	buffer[0] = Spieleranzahl;
+	cout << "send() to " << iClient << endl;
 	if (send(iClient, (LPSTR)buffer, iLen, 0) < 0)
 	{
 		in_use[iClient] = 0;

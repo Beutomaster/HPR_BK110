@@ -7,12 +7,22 @@
 #include "C_Messung.h"
 
 MSG msg;
+//HANDLE ghEvents[2];
+char Client_on = 1;
+
+DWORD WINAPI ThreadProc(LPVOID);
 
 //Event Handling for Hidden Window
 LRESULT CALLBACK WSClientProc(HWND hWnd, UINT msg, WPARAM wP, LPARAM lP)
 {
 	switch (msg)
 	{
+	case KEY_A: senden(1);	// aufdecken
+		break;
+	case KEY_SPACE: senden(2);	// klingeln
+		break;
+	case KEY_Q: cleanup();
+		break;
 
 	case WM_SOCKET:							// WINSOCK-Messages
 	{
@@ -87,8 +97,19 @@ bool WINAPI ConsoleHandler(DWORD CEvent)
 	return TRUE;
 }
 
+bool iskeypressed()
+{
+	return WaitForSingleObject(
+		GetStdHandle(STD_INPUT_HANDLE),
+		0
+	) == WAIT_OBJECT_0;
+}
+
 int main()
 {
+	HANDLE hThread;
+	DWORD dwThreadID;
+
 	//Event-Handler für Consolen-Fenster (zum Aufräumen bei Programmabbruch)
 	if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler, TRUE) == FALSE)
 	{
@@ -116,19 +137,70 @@ int main()
 
 	while (Verbindung_INIT()); //Eingabe IP-Adresse, Verbindung aufbauen bis Erfolg
 
+	// Create a thread for Key-Inputs
+	hThread = CreateThread(
+		NULL,         // default security attributes
+		0,            // default stack size
+		(LPTHREAD_START_ROUTINE)ThreadProc,
+		NULL,         // no thread function arguments
+		0,            // default creation flags
+		&dwThreadID); // receive thread identifier
+
+	if (hThread == NULL)
+	{
+		printf("CreateThread error: %d\n", GetLastError());
+		return 1;
+	}
+
 	//Waiting for Events
-	while (42) { //lastet den Prozessor voll aus, mit Tastendruck-Events könnte man GetMessage benutzen
+	while (Client_on) {
 		//bei Broadcasts Event -> C_Verbindung empfangen()
 		//bei Tastendruck Event C_Verbindung senden()
 
-		if (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE))
+		//if (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE)) //lastet den Prozessor voll aus, mit Tastendruck-Events kann man GetMessage benutzen
+		if (GetMessage(&msg, hWnd, 0, 0))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		tastendruck(); //prüft ob Taste gedrückt wurde und sendet diese (falls nicht gesperrt)
+		//tastendruck(); //prüft ob Taste gedrückt wurde und sendet diese (falls nicht gesperrt)
 
 	}
     return 0;
+}
+
+DWORD WINAPI ThreadProc(LPVOID lpParam)
+{
+
+	// lpParam not used in this example
+	UNREFERENCED_PARAMETER(lpParam);
+
+	unsigned char KeyInfo = 0;
+
+	while (Client_on) {
+		iskeypressed(); //waits until a key is pressed
+		KeyInfo = _getch_nolock();
+		//cout << "Taste: " << KeyInfo << endl;
+		switch (KeyInfo) {
+		case 'a':
+			if (!glob_tastensperre) {
+				glob_tastensperre = 1;
+				//senden(1);	// aufdecken
+				SendMessage(hWnd, KEY_A, 0, 0);
+			}
+			break;
+		case ' ':
+			if (!glob_tastensperre) {
+				SendMessage(hWnd, KEY_SPACE, 0, 0);
+				//senden(2);	// klingeln
+				glob_tastensperre = 1;
+			}
+			break;
+		case 'q': //verlässt das Programm
+			//cleanup();
+			SendMessage(hWnd, KEY_Q, 0, 0);
+		}
+	}
+	return 0;
 }
 

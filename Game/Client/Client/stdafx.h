@@ -32,18 +32,16 @@
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
 
+#include <conio.h>	// für getch()
+
 #pragma comment(lib,"ws2_32.lib")
 
 using namespace std;
 
 #define WM_SOCKET (WM_USER + 1)					// private Windows-Nachrichten
 #define SERVER_PORT 6000			 				// COM-Server Port, über den der Server erreichbar ist
-#define IDD_WSSERVER                    101
-#define IDD_WSCLIENT                    101
-#define IDC_STATUS                      1000
-#define IDC_SENDDATA                    1001
-#define IDC_RECEIVE                     1002
-#define IDC_SEND                        1003
-#define IDC_DESTADDRESS                 1004
-#define IDC_CLOSE                       1005
-#define IDC_CONNECT                     1006
+#define KEY_A (WM_USER + 2)
+#define KEY_SPACE (WM_USER + 3)
+#define KEY_Q (WM_USER + 4)
+
+extern char Client_on;

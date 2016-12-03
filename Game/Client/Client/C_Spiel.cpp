@@ -2,7 +2,6 @@
 #include "C_Verbindung.h"
 #include "C_Spiel.h"
 #include <iomanip>  // für setw()
-#include <conio.h>	// für getch()
 
 unsigned char glob_tastensperre = 0;
 
@@ -92,17 +91,17 @@ void tastendruck() {
 		switch (KeyInfo) {
 		case 'a': 
 			if (!glob_tastensperre) {
-				senden(1);	// aufdecken
 				glob_tastensperre = 1;
+				senden(1);	// aufdecken
 			}
 			break;
 		case ' ': 
 			if (!glob_tastensperre) {
+				glob_tastensperre = 1; 
 				senden(2);	// klingeln
-				glob_tastensperre = 1;
 			}
 			break;
-		case 'q': //verlässt noch nicht das programm
+		case 'q': //verlässt das Programm
 			cleanup();
 			return;
 			
