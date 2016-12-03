@@ -1,5 +1,5 @@
 # HPR_BK110
-Game Project for HPR_BK110
+Game Project for HPR_BK110 @FH-Kiel
 
 Halligalli
 ----------
