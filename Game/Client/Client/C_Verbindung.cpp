@@ -32,14 +32,14 @@ char Verbindung_INIT() {
 	struct addrinfo *result = NULL,
 		*ptr = NULL,
 		hints;
-	char *sendbuf = "this is a test";
-	char recvbuf[DEFAULT_BUFLEN];
+	//char *sendbuf = "this is a test";
+	//char recvbuf[DEFAULT_BUFLEN];
 	int iResult;
-	int recvbuflen = DEFAULT_BUFLEN;
-	unsigned char Spieleranzahl = 0;
-	unsigned char Kartenanzahl[4];
-	unsigned char aktuelle_Karte[4];
-	unsigned char Nachricht = 0;
+	//int recvbuflen = DEFAULT_BUFLEN;
+	//unsigned char Spieleranzahl = 0;
+	//unsigned char Kartenanzahl[4];
+	//unsigned char aktuelle_Karte[4];
+	//unsigned char Nachricht = 0;
 
 	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -116,8 +116,9 @@ void senden(unsigned char Taste) {
 	if (ConnectSocket != INVALID_SOCKET)
 	{
 		char Buffer[255];
-		int  iSendLen=1;
-		Buffer[0]=Taste;
+		int  iSendLen=2;
+		Buffer[0] = Taste;
+		Buffer[1] = spielzug;
 		cout << "FD_WRITE" << endl;
 		
 		cout << "send()...";
@@ -169,13 +170,13 @@ void empfangen() {
 			}
 			cout << endl;
 		}
-		if (!Spieler) {
+		if (!Spieler) { //noch keine Spielernummer?
 			Spieler = recvbuf[0];
 			cout << endl << "Spieler: " << (int)Spieler << endl << endl;
 		}
 		else {
 			Spieleranzahl = recvbuf[0];
-			if (iReadLen != (Spieleranzahl * 2 + 2)) {
+			if (iReadLen != (Spieleranzahl * 2 + 3)) {
 				printf("Fehlerhafte Nachricht!\n");
 			}
 			else {
@@ -184,6 +185,7 @@ void empfangen() {
 					aktuelle_Karte[i] = recvbuf[1 + Spieleranzahl + i];
 				}
 				Nachricht = recvbuf[1 + Spieleranzahl * 2];
+				spielzug = recvbuf[2 + Spieleranzahl * 2];
 				aktualisieren(Spieleranzahl, Kartenanzahl, aktuelle_Karte, Nachricht);
 				glob_tastensperre = 0;
 				if (Messung) messung_auswerten(); //Zeitmessung auswerten und anzeigen

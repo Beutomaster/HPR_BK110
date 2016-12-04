@@ -3,6 +3,7 @@
 #include "C_Spiel.h"
 #include <iomanip>  // für setw()
 
+unsigned char spielzug = 0;
 unsigned char glob_tastensperre = 0;
 
 void aktualisieren(unsigned char Spieleranzahl, unsigned char *kartenanzahl, unsigned char *offene_karte, unsigned char Nachricht) {
@@ -34,6 +35,7 @@ void aktualisieren(unsigned char Spieleranzahl, unsigned char *kartenanzahl, uns
 	cout << "H A L L I G A L L I" << endl << endl;
 	cout << "a = Karte aufdecken, Leertaste = Klingeln, q = Ende" << endl << endl;
 	cout << "Spieler: " << (int)Spieler << endl;
+	cout << "Spielzug: " << (int)spielzug << endl;
 	//cout << hex << (int)Nachricht << dec;
 	// empfangenes Spielfeld ausgeben
 	switch ((int)Spieleranzahl) {
