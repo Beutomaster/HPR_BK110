@@ -32,7 +32,7 @@ char wtcp_serv() //returns 0 on error, 1 if normally closed
 {
 	struct sockaddr_in addr;
 	int adresslaenge;
-	MSG	   msg;
+	//MSG	   msg;
 	char s[20];
 	WSADATA wsaData;
 	int iResult;
@@ -229,12 +229,14 @@ void empfangen(SOCKET iClient, unsigned char Spieler)	// Read and send update br
 		}
 		cout << endl;
 
-		if (iLen != 1) {
+		if (iLen != 2) {
 			printf("Fehlerhafte Nachricht!\n");
 		}
 		else {
 			Taste = buffer[0];
-			if (Spielstart) aktualisieren(Spieler, Taste);
+			if (Spielstart) {
+				if (buffer[1] == spielzug) aktualisieren(Spieler, Taste);
+			}
 			else {
 				if (Taste == 2) {
 					Player.Start[Spieler - 1] = 1;
@@ -273,13 +275,14 @@ void broadcast(unsigned char Spieleranzahl, unsigned char *Kartenanzahl, unsigne
 	SOCKET iClient;
 
 	//Nachricht im buffer erstellen
-	char iLen = 2 + Spieleranzahl * 2;
+	char iLen = 3 + Spieleranzahl * 2;
 	buffer[0] = Spieleranzahl;
 	for (int i = 0; i < Spieleranzahl; i++) {
 		buffer[1 + i] = Kartenanzahl[i];
 		buffer[1 + Spieleranzahl + i] = aktuelle_Karte[i];
 	}
 	buffer[1 + Spieleranzahl * 2] = Nachricht;
+	buffer[2 + Spieleranzahl * 2] = spielzug;
 
 	//send
 	for (iClient = 0; iClient < MAX_SOCKETS; iClient++) {

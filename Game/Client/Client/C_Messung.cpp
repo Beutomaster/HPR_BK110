@@ -30,7 +30,7 @@ void messung_init() {
 		filename[len_filename + 3] = 't';
 		filename[len_filename + 4] = '\0';
 
-		printf("Die Antwortzeiten des Servers auf Tastatur-Eingabe-Nachrichten wird waehrend des Spiels gemessen.\n\n", filename);
+		printf("Die Antwortzeiten des Servers auf Tastatur-Eingabe-Nachrichten wird waehrend des Spiels gemessen.\n\n");
 		printf("Die Messwerte werden in %s geschrieben.\n\n", filename);
 	}
 

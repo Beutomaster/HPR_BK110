@@ -6,6 +6,7 @@
 #include <math.h>
 
 // globale Variablen
+unsigned char spielzug = 0;
 unsigned char karten[56];
 unsigned char spielerkarten[4][56];	// [Spieler][Karten]
 unsigned char gespielte_karten[56];
@@ -20,6 +21,8 @@ unsigned char spielerstatus[4];
 // globale Variablen ende
 
 void Spiel_INIT() {	//Karten verteilen, Spielfeld verschicken
+	spielzug = 1;
+	cout << "Spielzug: " << (int)spielzug << endl;
 	srand(unsigned(time(0)));			// Zufallszahl initialisieren
 
 	// Spieler aktivieren
@@ -103,6 +106,8 @@ void aktualisieren(unsigned char Spieler, unsigned char Taste) {	//Taste = 1 (Ka
 												// verarbeitet empfangen Tastendruck
 												// aktualisert Spielstatus
 												// S_Verbindung - broadcast() aufrufen
+	spielzug++;
+	cout << "Spielzug: " << (int)spielzug << endl;
 	int sp = ((int)Spieler) - 1, ta = (int)Taste, nachricht = 0;
 
 	switch (ta) {
@@ -152,7 +157,7 @@ void aktualisieren(unsigned char Spieler, unsigned char Taste) {	//Taste = 1 (Ka
 				break;
 			}
 		}
-		// klingeln falsch -> alle anderen aktiven Spieler erhalten eine Karte vom Klingelden
+		// klingeln falsch -> alle anderen aktiven Spieler erhalten eine Karte vom Klingelnden
 		if (klingelflag == 0) {
 			for (int i = 0; i < Spieleranzahl; i++) {
 				if (i != sp && kartenanzahl[sp] > 0 && spielerstatus[i] == 1) {
