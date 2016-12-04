@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "S_Verbindung.h"
 #include "S_Spiel.h"
-#include "S_Messung.h"
 
 //Event Handling for Console Window
 bool WINAPI ConsoleHandler(DWORD CEvent)

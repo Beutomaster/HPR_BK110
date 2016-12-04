@@ -80,38 +80,6 @@ void aktualisieren(unsigned char Spieleranzahl, unsigned char *kartenanzahl, uns
 	}
 } 
 
-void tastendruck() {
-	// Taste = 1 (Karte aufdecken), = 2 (Klingeln)
-	// Karte aufdecken erlaubt? Spieler dran?
-	// löst C_Senden aus
-	// Nach Tastendruck sperrung bis nächster Broadcast
-
-	unsigned char KeyInfo = 0;
-	
-	if (_kbhit()) { // Nur wenn auch eine Taste gedrückt ist
-		KeyInfo = _getch_nolock();
-		//cout << "Taste: " << KeyInfo << endl;
-		switch (KeyInfo) {
-		case 'a': 
-			if (!glob_tastensperre) {
-				glob_tastensperre = 1;
-				senden(1);	// aufdecken
-			}
-			break;
-		case ' ': 
-			if (!glob_tastensperre) {
-				glob_tastensperre = 1; 
-				senden(2);	// klingeln
-			}
-			break;
-		case 'q': //verlässt das Programm
-			cleanup();
-			return;
-			
-		}
-	}
-}
-
 // Hilfsfunktion zur Konsolenausgabe
 void gotoxy(int x, int y)
 {
