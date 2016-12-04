@@ -35,7 +35,7 @@ LRESULT CALLBACK WSClientProc(HWND hWnd, UINT msg, WPARAM wP, LPARAM lP)
 				cout << "Ziel des Spiels ist es alle Karten zu gewinnen." << endl;
 				cout << "Wer keine Karten mehr hat scheidet aus." << endl;
 				cout << "Die Spieler muessen reihum die naechste Karte mit der Taste a von ihrem Stapel aufdecken." << endl;
-				cout << "Wer mit Leertaste klingelt, wenn insgesamt fuenf Augen von der jeweilgen Farbe A bis D auf dem Tisch liegen, gewinnt alle aufgedeckten Karten." << endl;
+				cout << "Wer mit Leertaste klingelt, wenn insgesamt fuenf Augen von der jeweiligen Farbe A bis D auf dem Tisch liegen, gewinnt alle aufgedeckten Karten." << endl;
 				cout << "Wer falsch klingelt, muss an jeden Spieler eine Karte abgeben." << endl << endl;
 				cout << "Wenn mindestens zwei Spieler mit dem Server verbunden sind und geklingelt haben, startet das Spiel." << endl << endl;
 				glob_tastensperre = 0;
@@ -159,28 +159,29 @@ int main()
 		//bei Broadcasts Event -> C_Verbindung empfangen()
 		//bei Tastendruck Event C_Verbindung senden()
 
-		//if (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE)) //lastet den Prozessor voll aus, mit Tastendruck-Events kann man GetMessage benutzen
-		if (GetMessage(&msg, hWnd, 0, 0))
+		if (GetMessage(&msg, hWnd, 0, 0)) //waits until incomming message is received => no Consumption of CPU-Resources
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		//tastendruck(); //prüft ob Taste gedrückt wurde und sendet diese (falls nicht gesperrt)
-
 	}
     return 0;
 }
 
-DWORD WINAPI ThreadProc(LPVOID lpParam)
+DWORD WINAPI ThreadProc(LPVOID lpParam) //prüft ob Taste gedrückt wurde und sendet diese (falls nicht gesperrt)
 {
-
 	// lpParam not used in this example
 	UNREFERENCED_PARAMETER(lpParam);
 
 	unsigned char KeyInfo = 0;
 
 	while (Client_on) {
-		iskeypressed(); //waits until a key is pressed
+		// Taste = 1 (Karte aufdecken), = 2 (Klingeln)
+		// Karte aufdecken erlaubt? Spieler dran?
+		// löst C_Senden aus
+		// Nach Tastendruck sperrung bis nächster Broadcast
+
+		iskeypressed(); //waits until a key is pressed => no Consumption of CPU-Resources
 		KeyInfo = _getch_nolock();
 		//cout << "Taste: " << KeyInfo << endl;
 		switch (KeyInfo) {
